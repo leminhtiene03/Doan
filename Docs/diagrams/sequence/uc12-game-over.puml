@@ -1,0 +1,59 @@
+@startuml uc12-game-over
+title UC12 - Game over, score, retry or exit
+hide footbox
+
+actor User as U
+participant Player as P
+participant GameManager as GM
+participant RunScoreTracker as ST
+participant "RunSelection\n<<ScriptableObject>>" as RS
+participant PlayerProgression as PP
+participant GameOverView as GO
+participant SceneLoader as SL
+
+P -> GM ++ : OnDeath
+GM -> GM : SetState(GameOver), timeScale = 0
+GM -> GO ++ : OnStateChanged(GameOver)
+GO -> GO : panelRoot.SetActive(true)
+GO --> GM --
+GM -> ST ++ : OnStateChanged(GameOver)
+ST -> GM ++ : RunTime
+GM --> ST -- : seconds
+ST -> RS ++ : Difficulty
+RS --> ST -- : score multiplier, id (default x1, Normal)
+ST -> PP ++ : Level
+PP --> ST -- : level
+ST -> P ++ : CharacterId
+P --> ST -- : id
+ST -> ST : score = round((RunTime * 10 + KilledXP * 5\n+ victory bonus) * multiplier)
+ST -> ST : LastResult = new RunResult(score, runTime, kills,\nlevel, victory, difficultyId, characterId)
+ST -> GO ++ : OnRunFinished(result)
+GO -> GO : scoreText = score
+GO --> ST --
+ST --> GM --
+GM --> P --
+
+alt Retry
+  U -> GO ++ : click Retry
+  GO -> GM ++ : RestartRun()
+  GM -> SL ++ : ReloadCurrent()
+  SL -> SL : timeScale = 1, reload UI_InGame
+  SL --> GM --
+  GM --> GO --
+  deactivate GO
+else Exit
+  U -> GO ++ : click Exit
+  GO -> GM ++ : ExitToMainMenu()
+  GM -> SL ++ : LoadMainMenu()
+  SL -> SL : timeScale = 1, LoadScene("Mainmenu")
+  SL --> GM --
+  GM --> GO --
+  deactivate GO
+end
+
+note over GM, GO
+  GameOverView shows the score from OnRunFinished,
+  so the order of OnStateChanged listeners does not matter.
+  Saving RunResult to the leaderboard is planned
+end note
+@enduml

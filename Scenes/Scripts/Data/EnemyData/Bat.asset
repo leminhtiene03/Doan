@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bcd6c1630317b94f8e6352825f5967a, type: 3}
+  m_Name: Bat
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.EnemyData
+  id: bat
+  displayName: Bat
+  prefab: {fileID: 1447473600820983539, guid: b560c96cd8cfe484fa4b8ac3371fad71, type: 3}
+  maxHP: 5
+  moveSpeed: 3
+  mass: 1
+  attackDamage: 5
+  attackInterval: 0.7
+  attackRange: 0.25
+  attackHitTime: 0.25
+  armorPercent: 0
+  magicResistPercent: 0
+  knockbackResist: 0
+  xpDrop: 1
+  coinDropChance: 0.3
+  coinAmount: 1
+  spawnFadeDuration: 0.3
+  corpseDuration: 3
+  corpseFadeDuration: 0.5

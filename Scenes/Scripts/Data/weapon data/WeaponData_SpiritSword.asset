@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8df11ebf8dcca4a9ed0784470ee182, type: 3}
+  m_Name: WeaponData_SpiritSword
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.WeaponData
+  id: spirit_sword
+  displayName: Spirit Sword
+  description: "Swords that home in on the nearest enemy."
+  icon: {fileID: 0}
+  weaponPrefab: {fileID: 8600000000000000003, guid: 7ef85b4fa2904fc28a0259f77bc7b1e9, type: 3}
+  effectPrefab: {fileID: 0}
+  projectilePrefab: {fileID: 8300000000000000006, guid: a69caba556794951b710b5b1a0f27f7f, type: 3}
+  aimMode: 1
+  damageType: 0
+  isStartingWeapon: 0
+  playOwnerAttackAnim: 0
+  levels:
+  - damage: 12
+    attackInterval: 1.5
+    size: 1
+    projectiles: 1
+    arcAngle: 30
+    knockback: 0
+    projectileSpeed: 9
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    upgradeDescription: "A sword that homes in on the nearest enemy"
+  - damage: 12
+    attackInterval: 1.5
+    size: 1
+    projectiles: 2
+    arcAngle: 30
+    knockback: 0
+    projectileSpeed: 9
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    upgradeDescription: "+1 sword"
+  - damage: 17
+    attackInterval: 1.5
+    size: 1
+    projectiles: 2
+    arcAngle: 30
+    knockback: 0
+    projectileSpeed: 9
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    upgradeDescription: "+5 damage"
+  - damage: 17
+    attackInterval: 1.5
+    size: 1
+    projectiles: 3
+    arcAngle: 30
+    knockback: 0
+    projectileSpeed: 9
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    upgradeDescription: "+1 sword"
+  - damage: 22
+    attackInterval: 1.5
+    size: 1
+    projectiles: 3
+    arcAngle: 30
+    knockback: 0
+    projectileSpeed: 9
+    range: 12
+    pierce: 1
+    impactRadius: 0
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    upgradeDescription: "+5 damage, pierce +1"
+  evolution: {fileID: 11400000, guid: 2fae7b86d5384195a8552fa27ddae1c3, type: 2}
+  evolutionItem: {fileID: 11400000, guid: a3168f46cdbf449b928de3006393f4b0, type: 2}

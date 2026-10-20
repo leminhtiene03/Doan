@@ -1,0 +1,297 @@
+@startuml mua-sam
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 40
+skinparam ranksep 50
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<boundary>> {
+  BackgroundColor #FFF6E5
+  BorderColor #C47F10
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam class<<enum>> {
+  BackgroundColor #F6F1FA
+  BorderColor #7A4F9A
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng mua sắm\n(Shop trong ván và mở khóa vũ khí)
+
+' ============================ Giao diện ================================
+package "Giao diện" {
+  class ShopView <<boundary>> {
+    - slots : ShopSlotView[5]
+    - goldText : TMP_Text
+    - rerollButton : Button
+    - rerollCostText : TMP_Text
+    - ownedWeaponSlots : OwnedItemSlotView[4]
+    - ownedPassiveSlots : OwnedItemSlotView[4]
+    - continueButton : Button
+    - saveAndExitButton : Button
+    + Show(offers : IReadOnlyList<ShopOffer>) : void
+    + Hide() : void
+    - Refresh() : void
+  }
+
+  class ShopSlotView <<boundary>> {
+    - icon : Image
+    - nameText : TMP_Text
+    - descriptionText : TMP_Text
+    - priceText : TMP_Text
+    - buyButton : Button
+    + Bind(offer : ShopOffer, canAfford : bool) : void
+    + ShowSold() : void
+  }
+
+  class OwnedItemSlotView <<boundary>> {
+    - icon : Image
+    - levelText : TMP_Text
+    - sellButton : Button
+    + Bind(item : OwnedItem, refund : int) : void
+  }
+
+  class ConfirmDialog <<boundary>> {
+    + Ask(message : string, onConfirm : Action) : void
+  }
+
+  class CountdownView <<boundary>> {
+    + Play(seconds : int, onFinished : Action) : void
+  }
+
+  class WeaponUnlockView <<boundary>> {
+    - entries : WeaponUnlockEntryView[]
+    - accountGoldText : TMP_Text
+    + Refresh() : void
+  }
+
+  class WeaponUnlockEntryView <<boundary>> {
+    - icon : Image
+    - nameText : TMP_Text
+    - priceText : TMP_Text
+    - unlockButton : Button
+    + Bind(weapon : WeaponData, unlocked : bool, canAfford : bool) : void
+  }
+}
+
+' ============================ Điều khiển ===============================
+package "Điều khiển" {
+  class ShopManager <<control>> {
+    - config : ShopConfig
+    - catalog : ShopItemData[]
+    - offers : List<ShopOffer>
+    - rerollCount : int
+    - purchaseCounts : Dictionary<ShopItemData, int>
+    + IsOpen : bool
+    + RerollCost : int
+    + OnOffersChanged : event Action
+    + Open() : void
+    + Buy(slotIndex : int) : bool
+    + Reroll() : bool
+    + Sell(item : OwnedItem) : void
+    + Continue() : void
+    + SaveAndExit() : void
+    - RollOffers() : void
+    - PickGuaranteedPotion() : ShopOffer
+    - PickBuildUpgrade() : ShopOffer
+    - PickWeighted(available : List<ShopItemData>) : ShopItemData
+    - IsAvailable(item : ShopItemData) : bool
+    - ApplyPurchase(offer : ShopOffer) : void
+  }
+
+  class ShopPricing <<control>> {
+    + {static} GetPrice(item : ShopItemData, currentLevel : int) : int
+    + {static} GetInvestedValue(item : OwnedItem) : int
+    + {static} GetRefund(item : OwnedItem, refundRatio : float) : int
+  }
+
+  class WeaponUnlockService <<control>> {
+    + IsUnlocked(weapon : WeaponData) : bool
+    + TryUnlock(weapon : WeaponData) : bool
+  }
+
+  class GameManager <<control>> {
+    + State : GameState
+    + RunTime : float
+    + EnterShop() : void
+    + ResumePlaying() : void
+    - CheckShopTime() : void
+  }
+
+  class SaveService <<control>> {
+    + SaveRun(data : RunSaveData) : void
+    + SaveAccount(data : AccountData) : void
+  }
+}
+
+' ============================ Thực thể =================================
+package "Thực thể" {
+  class ShopConfig <<entity>> {
+    + slotCount : int = 5
+    + rerollBaseCost : int = 5
+    + rerollCostStep : int = 5
+    + refundRatio : float = 0.3
+  }
+
+  class ShopItemData <<entity>> {
+    + id : string
+    + displayName : string
+    + description : string
+    + icon : Sprite
+    + type : ShopItemType
+    + basePrice : int
+    + pricePerLevel : int
+    + maxPerRun : int
+    + weight : float
+    + healRatio : float
+    + stat : StatType
+    + statValue : float
+  }
+
+  class ShopOffer <<entity>> {
+    + item : ShopItemData
+    + weapon : WeaponData
+    + passive : PassiveItemData
+    + targetLevel : int
+    + price : int
+    + isSold : bool
+  }
+
+  class OwnedItem <<entity>> {
+    + weapon : Weapon
+    + passive : PassiveItem
+    + IsStartingWeapon : bool
+    + Level : int
+  }
+
+  enum ShopItemType <<enum>> {
+    NewWeapon
+    WeaponLevel
+    NewPassive
+    PassiveLevel
+    Potion
+    ShopOnlyStat
+    MysteryChest
+  }
+
+  class PlayerProgression <<entity>> {
+    + Gold : int
+    + SpendGold(amount : int) : bool
+    + AddGold(amount : int) : void
+  }
+
+  class PlayerInventory <<entity>> {
+    + Weapons : IReadOnlyList<Weapon>
+    + Passives : IReadOnlyList<PassiveItem>
+    + AddWeapon(data : WeaponData) : void
+    + AddPassive(data : PassiveItemData) : void
+    + RemoveWeapon(weapon : Weapon) : void
+    + RemovePassive(passive : PassiveItem) : void
+  }
+
+  class WeaponData <<entity>> {
+    + id : string
+    + displayName : string
+    + isStartingWeapon : bool
+    + unlockedByDefault : bool
+    + unlockPrice : int
+  }
+
+  class PassiveItemData <<entity>>
+
+  class CharacterData <<entity>> {
+    + weaponPool : WeaponData[]
+    + passivePool : PassiveItemData[]
+  }
+
+  class RunScriptData <<entity>> {
+    + shopTimes : float[] = {600, 1200}
+  }
+
+  class AccountData <<entity>> {
+    + accountGold : int
+    + unlockedWeaponIds : string[]
+  }
+
+  class RunSaveData <<entity>> {
+    + runGold : int
+    + rerollCount : int
+    + purchaseCounts : IdCountData[]
+    + ...
+  }
+}
+
+' ============================ Quan hệ =================================
+ShopView "1" *-- "5" ShopSlotView
+ShopView "1" *-- "8" OwnedItemSlotView
+ShopView ..> ConfirmDialog : xác nhận bỏ đồ
+ShopView ..> CountdownView : Tiếp tục → 3-2-1
+ShopView --> "1" ShopManager : Buy / Reroll / Sell / Continue / SaveAndExit
+ShopSlotView ..> ShopOffer
+OwnedItemSlotView ..> OwnedItem
+
+WeaponUnlockView "1" *-- "4" WeaponUnlockEntryView
+WeaponUnlockView --> "1" WeaponUnlockService : TryUnlock
+WeaponUnlockService --> "1" AccountData : trừ accountGold, thêm unlockedWeaponIds
+WeaponUnlockService ..> SaveService : SaveAccount
+WeaponUnlockEntryView ..> WeaponData
+
+GameManager --> "1" RunScriptData : shopTimes
+GameManager ..> ShopManager : Open() ở phút 10, 20
+ShopManager ..> GameManager : ResumePlaying() sau đếm ngược
+ShopManager --> "1" ShopConfig
+ShopManager o-- "*" ShopItemData : catalog
+ShopManager "1" *-- "5" ShopOffer : offers
+ShopOffer --> "1" ShopItemData
+ShopOffer --> "0..1" WeaponData
+ShopOffer --> "0..1" PassiveItemData
+ShopItemData --> "1" ShopItemType
+ShopManager ..> ShopPricing : giá mua, giá hoàn
+ShopManager --> "1" PlayerProgression : runGold
+ShopManager --> "1" PlayerInventory : thêm / nâng / bỏ đồ
+ShopManager ..> CharacterData : chỉ bán đồ trong pool của lớp
+ShopManager ..> WeaponUnlockService : chỉ bán vũ khí đã mở khóa
+ShopManager ..> SaveService : SaveAndExit → SaveRun
+SaveService ..> RunSaveData
+SaveService ..> AccountData
+OwnedItem ..> PlayerInventory
+
+note right of ShopManager
+  Mở Shop: game đóng băng (timeScale = 0), UI phủ lên màn chơi.
+  Bày 5 ô: ≥1 bình máu, ≥1 món nâng cấp build hiện tại,
+  3 ô rút theo trọng số trong các món khả dụng.
+  Reroll: 5, 10, 15… vàng; reset ở lần mở Shop sau.
+  Bỏ đồ: hoàn 30% giá trị đã đầu tư, không bỏ được vũ khí khởi đầu.
+  Không bán thẻ tiến hóa.
+end note
+
+note bottom of WeaponUnlockService
+  Ở Main Menu: dùng vàng tài khoản mở khóa Boomerang (100),
+  Chông sắt (100), Quả cầu phép (150), Bình độc (150).
+  Vũ khí chưa mở khóa không xuất hiện ở thẻ lên cấp, rương, Shop.
+end note
+
+note bottom of AccountData
+  Cuối ván, vàng trong ván còn thừa chuyển vào accountGold:
+  thắng 100%, chết 50%, bỏ ván 0%.
+end note
+
+@enduml

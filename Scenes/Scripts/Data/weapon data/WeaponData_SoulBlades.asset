@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8df11ebf8dcca4a9ed0784470ee182, type: 3}
+  m_Name: WeaponData_SoulBlades
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.WeaponData
+  id: soul_blades
+  displayName: Soul Blades
+  description: "Five blades circle you and keep striking the nearest enemy."
+  icon: {fileID: 0}
+  weaponPrefab: {fileID: 9300000000000000003, guid: fbc6af4bc6ba472989a33d5cf467186a, type: 3}
+  effectPrefab: {fileID: 0}
+  projectilePrefab: {fileID: 8300000000000000006, guid: a69caba556794951b710b5b1a0f27f7f, type: 3}
+  aimMode: 3
+  damageType: 0
+  isStartingWeapon: 0
+  playOwnerAttackAnim: 0
+  levels:
+  - damage: 22
+    attackInterval: 1
+    size: 1
+    projectiles: 5
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 6
+    pierce: 0
+    impactRadius: 0.4
+    burstInterval: 0
+    slowAmount: 0
+    slowDuration: 0
+    duration: 0
+    chainCount: 0
+    pullStrength: 0
+    upgradeDescription: "Five blades circle you and keep striking the nearest enemy."
+  evolution: {fileID: 0}
+  evolutionItem: {fileID: 0}

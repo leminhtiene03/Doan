@@ -1,0 +1,46 @@
+@startuml uc05-take-damage
+title UC5 - Player takes damage from an enemy
+hide footbox
+
+participant EnemyManager as EM
+participant Enemy as E
+participant Player as P
+participant HudView as HUD
+participant GameManager as GM
+
+[-> EM ++ : Update()
+EM -> E ++ : Tick(playerPosition, deltaTime)
+E --> EM --
+EM -> E ++ : TryContact(playerPosition)
+E -> E : check state == Chase, contactTimer <= 0,\ndistance² <= contactRadius²
+E -> E : if contact: contactTimer = contactDamageInterval
+E --> EM -- : contact
+opt contact
+  EM -> E ++ : CreateContactDamage()
+  E --> EM -- : DamageInfo(contactDamage, Physical)
+  EM -> P ++ : TakeDamage(info)
+  alt state == Dead
+    P -> P : ignore
+  else alive
+    P -> P : SetHealth(HP - max(1, amount - Armor))
+    P -> HUD ++ : OnHealthChanged(current, max)
+    HUD --> P --
+    P -> P : StartHurtFlash()\n(Idle / Move state unchanged)
+    opt HP <= 0
+      alt Revival > 0
+        P -> P : Revival -= 1\nSetHealth(MaxHP * RevivalHealthRatio)
+        P -> HUD ++ : OnHealthChanged(current, max)
+        HUD --> P --
+      else Revival == 0
+        P -> P : ChangeState(Dead)
+        P -> GM ++ : OnDeath
+        GM -> GM : SetState(GameOver), timeScale = 0
+        ref over GM : UC12 - Game over and score
+        GM --> P --
+      end
+    end
+  end
+  P --> EM --
+end
+deactivate EM
+@enduml

@@ -1,0 +1,216 @@
+@startuml dieu-khien-nhan-vat
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 45
+skinparam ranksep 55
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<boundary>> {
+  BackgroundColor #FFF6E5
+  BorderColor #C47F10
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam class<<engine>> {
+  BackgroundColor #F2F2F2
+  BorderColor #777777
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng điều khiển nhân vật\n(di chuyển 8 hướng, ngắm theo chuột, tự động đánh)
+
+' ============================ Boundary ================================
+package "Đầu vào" {
+  class InputActionReference <<boundary>> {
+    + action : InputAction
+  }
+  note bottom of InputActionReference
+    Action "Move" (WASD / phím mũi tên / cần analog)
+    trong Settings/InputSystem_Actions.
+  end note
+
+  class Mouse <<boundary>> {
+    + {static} current : Mouse
+    + position : Vector2Control
+  }
+}
+
+' ============================ Control =================================
+package "Điều khiển" {
+  abstract class Player <<control>> {
+    - data : CharacterData
+    - moveAction : InputActionReference
+    - spriteRenderer : SpriteRenderer
+    - animator : Animator
+    - bodyCollider : Collider2D
+    - attackClip : AnimationClip
+    - body : Rigidbody2D
+    - slideMovement : SlideMovement
+    - mainCamera : Camera
+    - state : PlayerState
+    + AimDirection : Vector2
+    + MoveDirection : Vector2
+    + CurrentMoveSpeed : float
+    + Stats : PlayerStats
+    + Inventory : PlayerInventory
+    # Awake() : void
+    # Update() : void
+    # FixedUpdate() : void
+    + PlayAttackAnimation(attackInterval : float) : void
+    - UpdateAim() : void
+    - UpdateMovementState() : void
+    - ChangeState(next : PlayerState) : void
+    - EnterIdle() : void
+    - EnterMove() : void
+    - EnterDead() : void
+    - CreateSlideMovement() : SlideMovement
+  }
+
+  class Swordsman <<control>>
+  class Archer <<control>>
+  class Mage <<control>>
+  class Guardian <<control>>
+
+  class PlayerInventory <<control>> {
+    + Weapons : Weapon[0..4]
+    + TickWeapons(deltaTime : float) : void
+  }
+
+  abstract class Weapon <<control>> {
+    - cooldownTimer : float
+    + Tick(deltaTime : float) : void
+    # TryGetAimDirection(out direction : Vector2) : bool
+    # Attack(direction : Vector2) : void
+  }
+
+  class GameManager <<control>> {
+    + {static} Instance : GameManager
+    + IsPlaying : bool
+    + Player : Player
+    - followCamera : CinemachineCamera
+    - SpawnPlayer() : void
+  }
+}
+
+' ============================ Entity ==================================
+package "Dữ liệu" {
+  class CharacterData <<entity>> {
+    + baseMoveSpeed : float
+    + baseStats : PlayerStats
+  }
+
+  class PlayerStats <<entity>> {
+    + moveSpeed : float
+    + attackSpeed : float
+    + ...
+  }
+
+  enum PlayerState <<entity>> {
+    Idle
+    Move
+    Dead
+  }
+}
+
+' ============================ Unity Engine ============================
+package "Unity Engine" {
+  class Rigidbody2D <<engine>> {
+    + bodyType = Kinematic
+    + Slide(velocity : Vector2, deltaTime : float, movement : SlideMovement) : SlideResults
+  }
+
+  class SlideMovement <<engine>> {
+    + maxIterations : int
+    + surfaceSlideAngle : float
+    + surfaceUp : Vector2
+    + gravity : Vector2
+    + selectedCollider : Collider2D
+    + useSimulationMove : bool
+  }
+
+  class Collider2D <<engine>>
+
+  class Animator <<engine>> {
+    + SetBool("IsMoving", value) : void
+    + SetTrigger("Attack" / "Die") : void
+    + SetFloat("AttackSpeed", value) : void
+  }
+
+  class SpriteRenderer <<engine>> {
+    + flipX : bool
+  }
+
+  class Camera <<engine>> {
+    + ScreenToWorldPoint(position : Vector3) : Vector3
+  }
+
+  class CinemachineCamera <<engine>> {
+    + Follow : Transform
+  }
+}
+
+' ============================ Quan hệ =================================
+Player <|-- Swordsman
+Player <|-- Archer
+Player <|-- Mage
+Player <|-- Guardian
+
+Player --> "1" InputActionReference : đọc hướng di chuyển
+Player ..> Mouse : đọc vị trí chuột
+Player --> "1" Camera : đổi toạ độ màn hình → thế giới
+Player *-- "1" PlayerState : state
+Player --> "1" CharacterData : baseMoveSpeed
+Player *-- "1" PlayerStats : Stats.moveSpeed
+Player *-- "1" PlayerInventory : Inventory
+PlayerInventory "1" o-- "1..4" Weapon : TickWeapons()
+Weapon ..> Player : dùng AimDirection
+Weapon ..> Player : PlayAttackAnimation()
+
+Player --> "1" Rigidbody2D : Slide() mỗi FixedUpdate
+Player *-- "1" SlideMovement
+SlideMovement --> "1" Collider2D : selectedCollider (collider chân)
+Player --> "1" Animator : IsMoving / Attack / Die
+Player --> "1" SpriteRenderer : flipX theo hướng chuột
+
+Player ..> GameManager : chỉ điều khiển khi IsPlaying
+GameManager --> "1" CinemachineCamera : Follow = Player
+GameManager ..> Player : sinh ra khi vào ván
+
+note right of Player
+  Update():
+   1. Bỏ qua nếu Dead hoặc GameManager không ở trạng thái Playing.
+   2. MoveDirection = input Move (giới hạn độ dài 1).
+   3. UpdateAim(): AimDirection = (chuột trong thế giới - vị trí).normalized;
+      spriteRenderer.flipX = AimDirection.x < 0.
+   4. UpdateMovementState(): Idle <-> Move, đặt Animator "IsMoving".
+   5. Hồi máu, nháy đỏ khi bị đánh, Inventory.TickWeapons().
+  FixedUpdate():
+   surfaceUp = -MoveDirection;
+   body.Slide(MoveDirection × CurrentMoveSpeed, fixedDeltaTime, slideMovement)
+   → trượt dọc quái/vật cản, bị vây kín thì kẹt lại.
+end note
+
+note bottom of Weapon
+  Vũ khí tự đánh theo nhịp: hướng lấy từ AimDirection (Cursor),
+  quái gần nhất (NearestEnemy) hoặc quái ngẫu nhiên (RandomEnemy).
+  Vũ khí khởi đầu gọi Player.PlayAttackAnimation().
+end note
+
+@enduml
