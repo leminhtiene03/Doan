@@ -1,0 +1,258 @@
+@startuml ket-qua-bang-xep-hang
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 40
+skinparam ranksep 50
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<boundary>> {
+  BackgroundColor #FFF6E5
+  BorderColor #C47F10
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam class<<enum>> {
+  BackgroundColor #F6F1FA
+  BorderColor #7A4F9A
+}
+skinparam class<<external>> {
+  BackgroundColor #F2F2F2
+  BorderColor #777777
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng xem kết quả và bảng xếp hạng
+
+' ============================ Giao diện ================================
+package "Giao diện" {
+  class GameOverView <<boundary>> {
+    - panelRoot : GameObject
+    - titleText : TMP_Text
+    - scoreText : TMP_Text
+    - runTimeText : TMP_Text
+    - killsText : TMP_Text
+    - levelText : TMP_Text
+    - goldEarnedText : TMP_Text
+    - rankText : TMP_Text
+    - retryButton : Button
+    - leaderboardButton : Button
+    - exitButton : Button
+    - HandleStateChanged(state : GameState) : void
+    - ShowResult(result : RunResult) : void
+    - ShowRank(rank : int) : void
+  }
+
+  class LeaderboardView <<boundary>> {
+    - rows : LeaderboardRowView[50]
+    - myRow : LeaderboardRowView
+    - statusText : TMP_Text
+    - closeButton : Button
+    + Open() : void
+    - Show(entries : IReadOnlyList<LeaderboardEntry>, myRank : int) : void
+  }
+
+  class LeaderboardRowView <<boundary>> {
+    - rankText : TMP_Text
+    - nameText : TMP_Text
+    - scoreText : TMP_Text
+    - characterText : TMP_Text
+    - difficultyText : TMP_Text
+    - highlight : GameObject
+    + Bind(rank : int, entry : LeaderboardEntry, isMe : bool) : void
+  }
+
+  class RecentRunsView <<boundary>> {
+    - rows : RecentRunRowView[10]
+    + Show(runs : IReadOnlyList<RunResult>) : void
+  }
+}
+
+' ============================ Điều khiển ===============================
+package "Điều khiển" {
+  class RunScoreTracker <<control>> {
+    - config : ScoreConfig
+    - runSelection : RunSelection
+    - progression : PlayerProgression
+    + Kills : int
+    + KilledXP : int
+    + LastResult : RunResult
+    + OnRunFinished : event Action<RunResult>
+    + CalculateScore(runTime : float, victory : bool) : int
+    - HandleEnemyDied(enemy : Enemy) : void
+    - HandleStateChanged(state : GameState) : void
+    - FinishRun(victory : bool) : void
+  }
+
+  class GameManager <<control>> {
+    + State : GameState
+    + RunTime : float
+    + OnStateChanged : event Action<GameState>
+    + RestartRun() : void
+    + ExitToMainMenu() : void
+  }
+
+  class AccountProgressService <<control>> {
+    + ApplyRunResult(result : RunResult, runGold : int) : Task
+    - TransferGold(runGold : int, victory : bool) : int
+    - AddRecentRun(result : RunResult) : void
+  }
+
+  class LeaderboardService <<control>> {
+    - {static} Collection : string = "leaderboard"
+    - {static} TopCount : int = 50
+    + SubmitIfBestAsync(result : RunResult) : Task<bool>
+    + GetTopAsync() : Task<IReadOnlyList<LeaderboardEntry>>
+    + GetRankAsync(score : int) : Task<int>
+  }
+
+  class AuthService <<control>> {
+    + {static} UserId : string
+    + {static} DisplayName : string
+  }
+}
+
+' ============================ Thực thể =================================
+package "Thực thể" {
+  class RunResult <<entity>> {
+    + Score : int
+    + RunTime : float
+    + Kills : int
+    + Level : int
+    + Victory : bool
+    + DifficultyId : string
+    + CharacterId : string
+    + Timestamp : string
+  }
+
+  class ScoreConfig <<entity>> {
+    + pointsPerSecond : float = 10
+    + pointsPerKillXP : float = 5
+    + victoryBonus : int = 5000
+  }
+
+  class DifficultyData <<entity>> {
+    + id : string
+    + displayName : string
+    + scoreMultiplier : float
+  }
+
+  class RunSelection <<entity>> {
+    + Character : CharacterData
+    + Difficulty : DifficultyData
+  }
+
+  class PlayerProgression <<entity>> {
+    + Level : int
+    + Gold : int
+  }
+
+  class LeaderboardEntry <<entity>> {
+    + uid : string
+    + displayName : string
+    + score : int
+    + difficultyId : string
+    + characterId : string
+    + runTime : float
+    + kills : int
+    + level : int
+    + victory : bool
+    + achievedAt : DateTime
+  }
+
+  class AccountData <<entity>> {
+    + accountGold : int
+    + recentRuns : RunResult[0..10]
+  }
+
+  enum GameState <<enum>> {
+    Playing
+    LevelUp
+    Shop
+    GameOver
+    Victory
+  }
+}
+
+package "Firebase SDK" {
+  class FirebaseFirestore <<external>> {
+    + Collection(path : string) : CollectionReference
+    + RunTransactionAsync(fn) : Task
+  }
+  class Query <<external>> {
+    + OrderByDescending(field : string) : Query
+    + Limit(count : int) : Query
+    + WhereGreaterThan(field : string, value : object) : Query
+    + Count : AggregateQuery
+  }
+}
+
+' ============================ Quan hệ =================================
+GameManager --> "1" GameState : State
+RunScoreTracker ..> GameManager : OnStateChanged (GameOver / Victory)
+RunScoreTracker --> "1" ScoreConfig
+RunScoreTracker --> "1" RunSelection : độ khó, nhân vật
+RunSelection --> "1" DifficultyData
+RunScoreTracker --> "1" PlayerProgression : cấp, vàng
+RunScoreTracker ..> RunResult : tạo khi kết thúc ván
+
+GameOverView ..> GameManager : OnStateChanged / RestartRun / ExitToMainMenu
+GameOverView ..> RunScoreTracker : OnRunFinished
+GameOverView ..> RunResult : hiển thị
+GameOverView ..> LeaderboardService : GetRankAsync
+GameOverView ..> LeaderboardView : mở bảng xếp hạng
+
+RunScoreTracker ..> AccountProgressService : OnRunFinished
+RunScoreTracker ..> LeaderboardService : OnRunFinished
+AccountProgressService --> "1" AccountData : accountGold, recentRuns
+AccountData "1" *-- "0..10" RunResult : recentRuns
+
+LeaderboardService ..> AuthService : uid, tên hiển thị
+LeaderboardService --> FirebaseFirestore
+LeaderboardService ..> Query : top 50, đếm hạng
+LeaderboardService ..> LeaderboardEntry : đọc / ghi
+LeaderboardEntry ..> RunResult : sao chép kết quả tốt nhất
+
+LeaderboardView ..> LeaderboardService : GetTopAsync / GetRankAsync
+LeaderboardView "1" *-- "51" LeaderboardRowView
+LeaderboardRowView ..> LeaderboardEntry
+RecentRunsView ..> AccountData : recentRuns
+RecentRunsView ..> RunResult
+
+note right of RunScoreTracker
+  Điểm = (giây sống × 10 + tổng XP quái đã giết × 5
+          + (thắng boss ? 5000 : 0)) × hệ số độ khó
+  Hệ số độ khó: Dễ ×0,8 · Thường ×1,0 · Khó ×1,4
+  Bỏ ván giữa chừng: không tạo RunResult, không tính điểm.
+end note
+
+note right of LeaderboardService
+  SubmitIfBestAsync: transaction trên leaderboard/{uid},
+  chỉ ghi khi chưa có hoặc score mới lớn hơn score cũ.
+  GetTopAsync: sắp score giảm dần, lấy 50 dòng.
+  GetRankAsync: đếm số document có score lớn hơn, hạng = kết quả + 1.
+end note
+
+note bottom of AccountProgressService
+  Cuối ván: chuyển vàng trong ván còn thừa vào accountGold
+  (thắng 100%, chết 50%), thêm RunResult vào đầu recentRuns,
+  giữ tối đa 10 ván gần nhất.
+end note
+
+@enduml

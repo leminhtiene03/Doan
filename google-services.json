@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131392602640",
+    "project_id": "game-200c7",
+    "storage_bucket": "game-200c7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131392602640:android:2592b6223ddc0e4db00095",
+        "android_client_info": {
+          "package_name": "com.yourteam.survivalaction"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuHIRXveqUdhUScrwy6qxypnxSUpaapZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

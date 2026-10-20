@@ -1,0 +1,316 @@
+@startuml chien-dau
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 40
+skinparam ranksep 50
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam class<<enum>> {
+  BackgroundColor #F6F1FA
+  BorderColor #7A4F9A
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng chiến đấu
+
+' ============================ Chung ===================================
+package "Sát thương" {
+  abstract class Entity <<entity>> {
+    # currentHP : float
+    + CanBeHit : bool
+    + TakeDamage(info : DamageInfo) : void
+    + ApplySlow(amount : float, duration : float) : void
+    + AddPull(velocity : Vector2) : void
+    # Die() : void
+  }
+
+  class DamageInfo <<entity>> {
+    + Amount : float
+    + Type : DamageType
+    + Knockback : Vector2
+    + Source : Entity
+  }
+
+  class HitEffect <<entity>> {
+    + SlowAmount : float
+    + SlowDuration : float
+    + ApplyTo(target : Entity) : void
+  }
+
+  class Hurtbox <<entity>> {
+    + Owner : Entity
+    + Collider : Collider2D
+    + {static} Create(owner : Entity, renderer : SpriteRenderer, scale : Vector2, layer : int) : Hurtbox
+  }
+
+  class AreaDamage <<control>> {
+    + {static} Apply(center : Vector2, radius : float, layerMask : int, damage : DamageInfo, effect : HitEffect) : void
+  }
+
+  enum DamageType <<enum>> {
+    Physical
+    Magic
+  }
+}
+
+' ============================ Phía người chơi ==========================
+package "Người chơi tấn công" {
+  abstract class Player <<control>> {
+    + Stats : PlayerStats
+    + BonusPierce : int
+    + TakeDamage(info : DamageInfo) : void
+    + ModifyOutgoingDamage(damage : float) : float
+    + RollSpellEcho(type : DamageType) : bool
+    # OnDamaged(info : DamageInfo, taken : float) : void
+    # Die() : void
+  }
+  class Swordsman <<control>> {
+    - critChance : float
+    - critDamage : float
+  }
+  class Archer <<control>> {
+    - bonusPierce : int
+  }
+  class Mage <<control>> {
+    - spellEchoChance : float
+  }
+  class Guardian <<control>> {
+    - thornsRatio : float
+    - maxThornsDamage : float
+  }
+
+  abstract class Weapon <<control>> {
+    + Data : WeaponData
+    + Level : int
+    + Tick(deltaTime : float) : void
+    # TryGetAimDirection(out direction : Vector2) : bool
+    # CreateDamage(knockbackDirection : Vector2) : DamageInfo
+    # Attack(direction : Vector2) : void
+  }
+  class SwordSlash <<control>> {
+    - HitEnemiesInArc(origin, direction, range, arcAngle) : void
+  }
+  class ProjectileWeapon <<control>> {
+    - Fire(direction : Vector2) : void
+  }
+  class LightningStrike <<control>> {
+    - Strike(target : Enemy, radius : float) : void
+    - FindChainTarget(from : Vector2, range : float) : Enemy
+  }
+  class OrbitingOrbs <<control>> {
+    - HitAround(orbIndex : int, position : Vector2, radius : float) : void
+  }
+  class ZoneWeapon <<control>> {
+    - SpawnZone(position : Vector2, level : WeaponLevelStats) : void
+  }
+  class SoulBlades <<control>>
+
+  class ProjectileManager <<control>> {
+    + {static} Instance : ProjectileManager
+    + Fire(prefab : Projectile, shot : ProjectileShot) : Projectile
+  }
+
+  class Projectile <<control>> {
+    - motion : ProjectileMotion
+    - pierceLeft : int
+    - impactRadius : float
+    + Launch(shot : ProjectileShot) : void
+    + Tick(deltaTime : float) : void
+    - OnTriggerEnter2D(other : Collider2D) : void
+    - Explode(center : Vector2) : void
+  }
+
+  class ProjectileShot <<entity>> {
+    + Origin : Vector2
+    + Direction : Vector2
+    + Speed : float
+    + Range : float
+    + Pierce : int
+    + Scale : float
+    + ImpactRadius : float
+    + Damage : DamageInfo
+    + HitEffect : HitEffect
+    + Layer : int
+  }
+
+  class DamageZone <<control>> {
+    - radius : float
+    - remainingTime : float
+    - pullStrength : float
+    - hitInterval : float
+    + Activate(...) : void
+    + Tick(deltaTime : float) : void
+  }
+
+  class WeaponData <<entity>> {
+    + aimMode : AimMode
+    + damageType : DamageType
+    + GetLevel(level : int) : WeaponLevelStats
+  }
+
+  class WeaponLevelStats <<entity>> {
+    + damage : float
+    + attackInterval : float
+    + knockback : float
+    + range : float
+    + pierce : int
+    + impactRadius : float
+    + slowAmount : float
+    + ...
+  }
+}
+
+' ============================ Phía quái ===============================
+package "Quái tấn công" {
+  class Enemy <<control>> {
+    - state : EnemyState
+    - attackDamage : float
+    - attackCooldown : float
+    - slowAmount : float
+    - knockbackVelocity : Vector2
+    + OnDeath : event Action<Enemy>
+    + Tick(playerPosition, playerCollider, deltaTime) : void
+    + ConsumeLandedAttack() : bool
+    + CreateAttackDamage() : DamageInfo
+    + TakeDamage(info : DamageInfo) : void
+    - IsInAttackRange(playerPosition, playerCollider) : bool
+    - EnterAttack() : void
+    - TickAttack(...) : void
+  }
+
+  class EnemyData <<entity>> {
+    + attackDamage : float
+    + attackInterval : float
+    + attackRange : float
+    + attackHitTime : float
+    + armorPercent : float
+    + magicResistPercent : float
+    + knockbackResist : float
+  }
+
+  class EnemyManager <<control>> {
+    + {static} Instance : EnemyManager
+    + Active : IReadOnlyList<Enemy>
+    + OnEnemyDied : event Action<Enemy>
+    + FindNearest(from : Vector2, range : float) : Enemy
+    + CollectVisible(results : List<Enemy>) : void
+    + CollectInRange(origin, range, results) : void
+  }
+
+  enum EnemyState <<enum>> {
+    Spawning
+    Chase
+    Attack
+    Dead
+  }
+}
+
+' ============================ Kết quả =================================
+package "Sau khi quái chết" {
+  class PickupManager <<control>> {
+    - HandleEnemyDied(enemy : Enemy) : void
+  }
+  class RunScoreTracker <<control>> {
+    + Kills : int
+    + KilledXP : int
+    - HandleEnemyDied(enemy : Enemy) : void
+  }
+}
+
+' ============================ Quan hệ =================================
+Entity <|-- Player
+Entity <|-- Enemy
+Player <|-- Swordsman
+Player <|-- Archer
+Player <|-- Mage
+Player <|-- Guardian
+
+Weapon <|-- SwordSlash
+Weapon <|-- ProjectileWeapon
+Weapon <|-- LightningStrike
+Weapon <|-- OrbitingOrbs
+Weapon <|-- ZoneWeapon
+Weapon <|-- SoulBlades
+
+Player "1" o-- "1..4" Weapon : vũ khí đang có
+Weapon --> "1" WeaponData
+WeaponData "1" *-- "1..5" WeaponLevelStats
+Weapon ..> DamageInfo : CreateDamage()
+Weapon ..> Player : ModifyOutgoingDamage / RollSpellEcho / BonusPierce
+
+SwordSlash ..> EnemyManager : duyệt Active
+SwordSlash ..> Hurtbox : ClosestPoint
+ProjectileWeapon ..> ProjectileManager : Fire()
+ProjectileWeapon ..> ProjectileShot : tạo
+ProjectileManager "1" o-- "0..*" Projectile : đạn đang bay
+Projectile ..> ProjectileShot
+Projectile ..> Hurtbox : OnTriggerEnter2D
+Projectile ..> AreaDamage : nổ vùng
+LightningStrike ..> EnemyManager : CollectVisible / CollectInRange
+LightningStrike ..> AreaDamage
+OrbitingOrbs ..> Hurtbox : OverlapCircle
+SoulBlades ..> EnemyManager : FindNearest
+ZoneWeapon "1" o-- "0..*" DamageZone
+DamageZone ..> Hurtbox : OverlapCircle
+AreaDamage ..> Hurtbox : OverlapCircle
+AreaDamage ..> HitEffect
+
+Hurtbox "*" --> "1" Entity : Owner
+Player *-- "1" Hurtbox
+Enemy *-- "1" Hurtbox
+DamageInfo --> "1" DamageType
+DamageInfo --> "1" Entity : Source
+HitEffect ..> Entity : ApplySlow
+
+Enemy --> "1" EnemyData
+Enemy *-- "1" EnemyState
+EnemyManager "1" o-- "0..*" Enemy : Active
+EnemyManager ..> Player : TakeDamage(CreateAttackDamage())
+Guardian ..> Entity : phản sát thương cho Source
+
+EnemyManager ..> PickupManager : OnEnemyDied
+EnemyManager ..> RunScoreTracker : OnEnemyDied
+
+note right of Enemy
+  Chase → vào attackRange (mép collider tới mép collider)
+  → Attack: đứng yên, phát animation, đến attackHitTime
+  kiểm tra lại tầm, còn trong tầm thì đòn trúng.
+  EnemyManager lấy ConsumeLandedAttack() rồi gọi
+  Player.TakeDamage(CreateAttackDamage()).
+  Nhận sát thương: × (1 − armor% hoặc magicResist%),
+  đẩy lùi × (1 − knockbackResist), nháy màu; HP ≤ 0 → Dead.
+end note
+
+note left of Player
+  Nhận sát thương:
+  max(1, Amount × (1 − min(Armor × 8%, 60%))).
+  Swordsman: chí mạng · Archer: +1 xuyên thấu
+  Mage: cộng hưởng phép (đánh lại ngay)
+  Guardian: phản 5% sát thương vật lý, tối đa 10/đòn.
+end note
+
+note bottom of Hurtbox
+  Collider ôm thân trên layer EnemyHurtbox / PlayerHurtbox.
+  Ma trận va chạm chỉ cho đạn phe kia chạm vào.
+end note
+
+@enduml

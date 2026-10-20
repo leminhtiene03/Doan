@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8df11ebf8dcca4a9ed0784470ee182, type: 3}
+  m_Name: WeaponData_HeavyStrike
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.WeaponData
+  id: heavy_strike
+  displayName: Heavy Strike
+  description: Heavy melee strike with strong knockback.
+  icon: {fileID: 0}
+  weaponPrefab: {fileID: 4695338783263782723, guid: 2afa78f8be0b43c4eb8b5e0ee51c4e80, type: 3}
+  effectPrefab: {fileID: 0}
+  projectilePrefab: {fileID: 0}
+  aimMode: 0
+  damageType: 0
+  isStartingWeapon: 1
+  playOwnerAttackAnim: 1
+  levels:
+  - damage: 12
+    attackInterval: 1.6
+    size: 1.5
+    projectiles: 0
+    arcAngle: 90
+    knockback: 1.5
+    projectileSpeed: 0
+    range: 0
+    pierce: 0
+    impactRadius: 0
+    upgradeDescription: Heavy melee strike with strong knockback
+  - damage: 15
+    attackInterval: 1.6
+    size: 1.5
+    projectiles: 0
+    arcAngle: 90
+    knockback: 1.5
+    projectileSpeed: 0
+    range: 0
+    pierce: 0
+    impactRadius: 0
+    upgradeDescription: +25% damage
+  - damage: 15
+    attackInterval: 1.6
+    size: 1.8
+    projectiles: 0
+    arcAngle: 90
+    knockback: 1.5
+    projectileSpeed: 0
+    range: 0
+    pierce: 0
+    impactRadius: 0
+    upgradeDescription: +20% size
+  - damage: 15
+    attackInterval: 1.6
+    size: 1.8
+    projectiles: 0
+    arcAngle: 90
+    knockback: 2.25
+    projectileSpeed: 0
+    range: 0
+    pierce: 0
+    impactRadius: 0
+    upgradeDescription: +50% knockback
+  - damage: 18.75
+    attackInterval: 1.44
+    size: 1.8
+    projectiles: 0
+    arcAngle: 90
+    knockback: 2.25
+    projectileSpeed: 0
+    range: 0
+    pierce: 0
+    impactRadius: 0
+    upgradeDescription: +25% damage, -10% interval

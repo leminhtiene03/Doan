@@ -1,0 +1,98 @@
+@startuml phan-ra-dang-nhap
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #1F5C7A
+skinparam actorBorderColor #1F5C7A
+skinparam usecase {
+  BorderColor #1F5C7A
+  BackgroundColor #EEF6FB
+}
+skinparam rectangle {
+  BorderColor #1F5C7A
+  BackgroundColor #FCFDFE
+}
+left to right direction
+
+title Biểu đồ use case phân rã - Đăng nhập
+
+actor "Người chơi" as Player
+actor "Firebase\nAuthentication" as FirebaseAuth <<hệ thống>>
+actor "Cloud Firestore" as Firestore <<hệ thống>>
+
+rectangle "Hệ thống tài khoản" {
+  usecase "Đăng nhập" as UC_Login
+  usecase "Đăng nhập bằng\nemail và mật khẩu" as UC_EmailLogin
+  usecase "Đăng ký tài khoản" as UC_Register
+  usecase "Chơi với tài khoản khách" as UC_Guest
+  usecase "Quên mật khẩu" as UC_Forgot
+  usecase "Tự động đăng nhập\n(phiên đã lưu)" as UC_AutoLogin
+
+  usecase "Kiểm tra dữ liệu nhập" as UC_Validate
+  usecase "Nhập tên hiển thị" as UC_Name
+  usecase "Tạo / cập nhật\nhồ sơ người chơi" as UC_Profile
+  usecase "Gửi email xác minh" as UC_Verify
+  usecase "Gửi email đặt lại mật khẩu" as UC_Reset
+
+  usecase "Lưu tài khoản khách\n(liên kết email)" as UC_Link
+  usecase "Đăng xuất" as UC_Logout
+  usecase "Cảnh báo mất dữ liệu\n(tài khoản khách)" as UC_Warn
+}
+
+Player --> UC_Login
+Player --> UC_Link
+Player --> UC_Logout
+
+UC_EmailLogin --|> UC_Login
+UC_Register --|> UC_Login
+UC_Guest --|> UC_Login
+UC_AutoLogin --|> UC_Login
+
+UC_EmailLogin ..> UC_Validate : <<include>>
+UC_EmailLogin ..> UC_Profile : <<include>>
+UC_Forgot ..> UC_EmailLogin : <<extend>>
+UC_Forgot ..> UC_Reset : <<include>>
+
+UC_Register ..> UC_Validate : <<include>>
+UC_Register ..> UC_Name : <<include>>
+UC_Register ..> UC_Profile : <<include>>
+UC_Register ..> UC_Verify : <<include>>
+
+UC_Guest ..> UC_Name : <<include>>
+UC_Guest ..> UC_Profile : <<include>>
+
+UC_AutoLogin ..> UC_Profile : <<include>>
+
+UC_Link ..> UC_Validate : <<include>>
+UC_Link ..> UC_Verify : <<include>>
+
+UC_Warn ..> UC_Logout : <<extend>>
+
+UC_EmailLogin --> FirebaseAuth
+UC_Register --> FirebaseAuth
+UC_Guest --> FirebaseAuth
+UC_AutoLogin --> FirebaseAuth
+UC_Reset --> FirebaseAuth
+UC_Verify --> FirebaseAuth
+UC_Link --> FirebaseAuth
+UC_Logout --> FirebaseAuth
+UC_Profile --> Firestore
+
+note right of UC_Validate
+  Email không trống, mật khẩu ≥ 6 ký tự,
+  hai ô mật khẩu khớp nhau,
+  tên hiển thị 3–16 ký tự.
+end note
+
+note right of UC_Link
+  Chỉ dành cho tài khoản khách.
+  Gắn email + mật khẩu vào tài khoản hiện tại,
+  giữ nguyên uid và toàn bộ dữ liệu.
+end note
+
+note right of UC_Warn
+  Tài khoản khách bấm Đăng xuất lần 1:
+  hiện cảnh báo; bấm lần 2 mới đăng xuất.
+end note
+
+@enduml

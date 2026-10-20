@@ -1,0 +1,203 @@
+@startuml bat-dau-van-moi
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 45
+skinparam ranksep 55
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<boundary>> {
+  BackgroundColor #FFF6E5
+  BorderColor #C47F10
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng bắt đầu ván mới\n(từ Main Menu đến khi vào phần chơi)
+
+' ============================ Boundary ================================
+package "Giao diện" {
+  class MainMenuView <<boundary>> {
+    - runSelection : RunSelection
+    - newGameButton : Button
+    - exitButton : Button
+    - Awake() : void
+  }
+
+  class CharacterSelectView <<boundary>> {
+    - runSelection : RunSelection
+    - options : CharacterOption[]
+    - backButton : Button
+    - Awake() : void
+    - Choose(character : CharacterData) : void
+  }
+
+  class CharacterOption <<boundary>> {
+    - button : Button
+    - character : CharacterData
+  }
+
+  class DifficultySelectView <<boundary>> {
+    - runSelection : RunSelection
+    - options : DifficultyOption[]
+    - backButton : Button
+    - Awake() : void
+    - Choose(difficulty : DifficultyData) : void
+  }
+
+  class DifficultyOption <<boundary>> {
+    - button : Button
+    - difficulty : DifficultyData
+  }
+}
+
+' ============================ Control =================================
+package "Điều khiển" {
+  class SceneLoader <<control>> {
+    + {static} LoadMainMenu() : void
+    + {static} LoadCharacterSelect() : void
+    + {static} LoadDifficultySelect() : void
+    + {static} LoadRun() : void
+    + {static} QuitGame() : void
+    - {static} Load(sceneName : string) : void
+  }
+
+  class GameManager <<control>> {
+    + {static} Instance : GameManager
+    - runSelection : RunSelection
+    - defaultCharacter : CharacterData
+    - defaultDifficulty : DifficultyData
+    - playerSpawnPosition : Vector2
+    + Difficulty : DifficultyData
+    + Player : Player
+    + State : GameState
+    + RunTime : float
+    - Awake() : void
+    - SpawnPlayer() : void
+    - SetState(state : GameState) : void
+  }
+}
+
+' ============================ Entity ==================================
+package "Thực thể" {
+  class RunSelection <<entity>> {
+    + Character : CharacterData
+    + Difficulty : DifficultyData
+    + SelectCharacter(character : CharacterData) : void
+    + SelectDifficulty(difficulty : DifficultyData) : void
+    + Clear() : void
+  }
+
+  class CharacterData <<entity>> {
+    + id : string
+    + displayName : string
+    + description : string
+    + portrait : Sprite
+    + baseMoveSpeed : float
+    + playerPrefab : Player
+  }
+
+  class DifficultyData <<entity>> {
+    + id : string
+    + displayName : string
+    + scoreMultiplier : float
+    + hpMultiplier : float
+    + damageMultiplier : float
+    + speedMultiplier : float
+    + spawnRateMultiplier : float
+    + maxAliveMultiplier : float
+  }
+
+  class PlayerStats <<entity>> {
+    + maxHP : float
+    + armor : float
+    + moveSpeed : float
+    + might : float
+    + attackSpeed : float
+    + area : float
+    + ...
+    + Clone() : PlayerStats
+  }
+
+  class WeaponData <<entity>> {
+    + id : string
+    + displayName : string
+    + isStartingWeapon : bool
+  }
+
+  abstract class Player <<entity>> {
+    + Stats : PlayerStats
+    + Inventory : PlayerInventory
+    + CharacterId : string
+    # Awake() : void
+  }
+
+  enum GameState <<entity>> {
+    Playing
+    LevelUp
+    Shop
+    GameOver
+    Victory
+  }
+}
+
+' ============================ Quan hệ =================================
+MainMenuView --> "1" RunSelection : Clear()
+MainMenuView ..> SceneLoader : New Game
+
+CharacterSelectView "1" *-- "4" CharacterOption : options
+CharacterOption --> "1" CharacterData
+CharacterSelectView --> "1" RunSelection : SelectCharacter()
+CharacterSelectView ..> SceneLoader : chọn xong / quay lại
+
+DifficultySelectView "1" *-- "3" DifficultyOption : options
+DifficultyOption --> "1" DifficultyData
+DifficultySelectView --> "1" RunSelection : SelectDifficulty()
+DifficultySelectView ..> SceneLoader : vào ván / quay lại
+
+RunSelection "1" --> "0..1" CharacterData : Character
+RunSelection "1" --> "0..1" DifficultyData : Difficulty
+
+GameManager --> "1" RunSelection : đọc lựa chọn
+GameManager --> "1" CharacterData : defaultCharacter
+GameManager --> "1" DifficultyData : defaultDifficulty
+GameManager ..> Player : sinh từ playerPrefab
+GameManager --> "1" GameState : State
+
+CharacterData "1" *-- "1" PlayerStats : baseStats
+CharacterData "*" --> "1" WeaponData : startingWeapon
+CharacterData "1" --> "1" Player : playerPrefab
+Player "1" *-- "1" PlayerStats : Stats (bản sao baseStats)
+Player ..> WeaponData : trang bị vũ khí khởi đầu
+
+note right of RunSelection
+  ScriptableObject dùng chung giữa các scene:
+  giữ nhân vật và độ khó đã chọn
+  từ màn chọn tới scene chơi.
+end note
+
+note bottom of GameManager
+  Chạy trước mọi script trong scene chơi:
+  lấy Difficulty và Character từ RunSelection
+  (không có thì dùng mặc định), sinh Player,
+  gán camera theo Player, đặt State = Playing.
+end note
+
+@enduml

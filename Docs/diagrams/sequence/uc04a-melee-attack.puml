@@ -1,0 +1,48 @@
+@startuml uc04a-melee-attack
+title UC4a - Melee attack (SwordSlash)
+hide footbox
+
+participant Player as P
+participant PlayerInventory as INV
+participant SwordSlash as W
+participant EnemyManager as EM
+participant Enemy as E
+participant PoolManager as PM
+
+[-> P ++ : Update()
+P -> INV ++ : TickWeapons(deltaTime)
+INV -> W ++ : Tick(deltaTime)
+W -> W : cooldownTimer -= deltaTime
+opt cooldownTimer <= 0
+  W -> W : cooldownTimer = AttackInterval / AttackSpeed
+  W -> W : Attack(AimDirection)\nrange = Size * Area, minDot = cos(ArcAngle / 2)
+  W -> EM ++ : Active
+  EM --> W -- : enemies
+  loop each enemy
+    opt CanBeHit and distance <= range + contactRadius\nand dot(toEnemy, aim) >= minDot
+      W -> P ++ : ModifyOutgoingDamage(Damage * Might)
+      P --> W -- : amount (Swordsman: critical hit)
+      W -> E ++ : TakeDamage(DamageInfo(amount, DamageType, knockback))
+      E -> E : HP -= amount * (1 - resist)\npush back * (1 - knockbackResist), hit flash
+      opt HP <= 0
+        E -> E : Die()
+        ref over E, EM : UC7 - Enemy death and despawn
+      end
+      E --> W --
+    end
+  end
+  opt EffectPrefab assigned
+    W -> PM ++ : Get(EffectPrefab, position, rotation)
+    PM --> W -- : slash effect
+    W -> W : effect scale = range
+  end
+  opt PlayOwnerAttackAnim
+    W -> P ++ : PlayAttackAnimation(attackInterval)
+    P -> P : AttackSpeed = max(1, clipLength / interval)\ntrigger Attack
+    P --> W --
+  end
+end
+W --> INV --
+INV --> P --
+deactivate P
+@enduml

@@ -1,0 +1,42 @@
+@startuml uc03-stats-panel
+title UC3 - View stats panel (hold Tab)
+hide footbox
+
+actor User as U
+participant Keyboard as KB
+participant StatsPanelView as SP
+participant Player as P
+participant PlayerStats as PS
+
+[-> SP ++ : Awake()
+SP -> SP : collect rows from rowContainer\nhide panel
+deactivate SP
+
+U -> KB : hold Tab
+[-> SP ++ : Update() (every frame, game is not paused)
+SP -> KB ++ : tabKey.isPressed
+KB --> SP -- : true
+SP -> SP : panelRoot.SetActive(true)
+SP -> P ++ : GetClassStats(list)
+P --> SP -- : class stats (Swordsman: Crit Chance, Crit Damage)
+loop 15 stats in fixed order
+  SP -> PS ++ : Get(stat)
+  PS --> SP -- : value
+  SP -> SP : write label and formatted value\n(120, 0.5/s, +1, 110%)
+end
+SP -> SP : write class stats\nhide unused rows, warn if rows are missing
+deactivate SP
+
+opt stats change while the panel is open (for example a stat card in LevelUp)
+  P -> SP ++ : OnStatsChanged
+  SP -> SP : Refresh()
+  deactivate SP
+end
+
+U -> KB : release Tab
+[-> SP ++ : Update()
+SP -> KB ++ : tabKey.isPressed
+KB --> SP -- : false
+SP -> SP : panelRoot.SetActive(false)
+deactivate SP
+@enduml

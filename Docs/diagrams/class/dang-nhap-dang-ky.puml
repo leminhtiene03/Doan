@@ -1,0 +1,211 @@
+@startuml dang-nhap-dang-ky
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #1F5C7A
+skinparam nodesep 45
+skinparam ranksep 55
+hide circle
+hide empty members
+skinparam class {
+  BorderColor #1F5C7A
+  BackgroundColor White
+}
+skinparam class<<boundary>> {
+  BackgroundColor #FFF6E5
+  BorderColor #C47F10
+}
+skinparam class<<control>> {
+  BackgroundColor #EAF4EA
+  BorderColor #3C8A3C
+}
+skinparam class<<entity>> {
+  BackgroundColor #EEF6FB
+  BorderColor #1F5C7A
+}
+skinparam class<<external>> {
+  BackgroundColor #F2F2F2
+  BorderColor #777777
+}
+skinparam package {
+  BorderColor #9AA9B3
+  BackgroundColor #FCFDFE
+  FontColor #1F5C7A
+}
+
+title Biểu đồ lớp - Chức năng đăng nhập / đăng ký
+
+' ============================ Boundary ================================
+package "Giao diện" {
+  class LoginView <<boundary>> {
+    - loginPanel : GameObject
+    - registerPanel : GameObject
+    - loginEmailInput : TMP_InputField
+    - loginPasswordInput : TMP_InputField
+    - guestNameInput : TMP_InputField
+    - registerEmailInput : TMP_InputField
+    - registerPasswordInput : TMP_InputField
+    - registerConfirmInput : TMP_InputField
+    - registerNameInput : TMP_InputField
+    - loginStatusText : TMP_Text
+    - registerStatusText : TMP_Text
+    - Start() : void
+    - SubmitLoginAsync() : Task
+    - SubmitRegisterAsync() : Task
+    - SubmitGuestAsync() : Task
+    - SubmitPasswordResetAsync() : Task
+    - ShowPanel(panel : GameObject) : void
+    - SetStatus(message : string) : void
+    - ValidateEmail(email : string) : string
+    - ValidatePassword(password : string) : string
+    - ValidateName(name : string) : string
+  }
+
+  class AccountPanelView <<boundary>> {
+    - nameText : TMP_Text
+    - guestPanel : GameObject
+    - memberPanel : GameObject
+    - linkEmailInput : TMP_InputField
+    - linkPasswordInput : TMP_InputField
+    - linkConfirmInput : TMP_InputField
+    - emailText : TMP_Text
+    - statusText : TMP_Text
+    - TogglePanel() : void
+    - SubmitLinkAsync() : Task
+    - HandleGuestSignOut() : void
+    - SignOut() : void
+  }
+}
+
+' ============================ Control =================================
+package "Điều khiển" {
+  class AuthService <<control>> {
+    + {static} MinPasswordLength : int = 6
+    + {static} IsReady : bool
+    + {static} IsSignedIn : bool
+    + {static} IsGuest : bool
+    + {static} UserId : string
+    + {static} DisplayName : string
+    + {static} InitializeAsync() : Task<bool>
+    + {static} SignInWithEmailAsync(email : string, password : string) : Task<AuthOutcome>
+    + {static} RegisterAsync(email : string, password : string, displayName : string) : Task<AuthOutcome>
+    + {static} SignInAsGuestAsync(displayName : string) : Task<AuthOutcome>
+    + {static} LinkGuestToEmailAsync(email : string, password : string) : Task<AuthOutcome>
+    + {static} SendPasswordResetAsync(email : string) : Task<AuthOutcome>
+    + {static} RefreshProfileAsync() : Task
+    + {static} SignOut() : void
+    - {static} RunAsync(action : Func<Task>, successMessage : string) : Task<AuthOutcome>
+    - {static} Describe(exception : Exception) : string
+  }
+
+  class UserProfileService <<control>> {
+    - {static} UsersCollection : string = "users"
+    - {static} ProfileVersion : int = 1
+    + {static} EnsureProfileAsync(displayName : string) : Task
+  }
+
+  class SceneLoader <<control>> {
+    + {static} LoadLogin() : void
+    + {static} LoadMainMenu() : void
+  }
+}
+
+' ============================ Entity ==================================
+package "Thực thể" {
+  class UserAccount <<entity>> {
+    + uid : string
+    + email : string
+    + displayName : string
+    + isAnonymous : bool
+    + isEmailVerified : bool
+  }
+
+  class AccountData <<entity>> {
+    + displayName : string
+    + createdAt : timestamp
+    + updatedAt : timestamp
+    + version : int
+    + accountGold : int
+    + unlockedWeaponIds : string[]
+    + recentRuns : RunResult[]
+  }
+
+  class AuthOutcome <<entity>> {
+    + Success : bool
+    + Message : string
+    + {static} Ok(message : string) : AuthOutcome
+    + {static} Fail(message : string) : AuthOutcome
+  }
+
+  class AuthMessages <<entity>> {
+    + {static} Connecting : string
+    + {static} EnterEmail : string
+    + {static} PasswordTooShort : string
+    + {static} PasswordsDoNotMatch : string
+    + {static} NameLength : string
+    + {static} ResetEmailSent : string
+    + {static} AccountLinked : string
+    + {static} FromAuthError(error : AuthError) : string
+  }
+}
+
+' ============================ Firebase SDK ============================
+package "Firebase SDK" {
+  class FirebaseAuth <<external>> {
+    + CurrentUser : FirebaseUser
+    + SignInWithEmailAndPasswordAsync(email, password) : Task<AuthResult>
+    + CreateUserWithEmailAndPasswordAsync(email, password) : Task<AuthResult>
+    + SignInAnonymouslyAsync() : Task<AuthResult>
+    + SendPasswordResetEmailAsync(email) : Task
+    + SignOut() : void
+  }
+
+  class FirebaseUser <<external>> {
+    + UserId : string
+    + Email : string
+    + DisplayName : string
+    + IsAnonymous : bool
+    + IsEmailVerified : bool
+    + UpdateUserProfileAsync(profile : UserProfile) : Task
+    + LinkWithCredentialAsync(credential : Credential) : Task<AuthResult>
+    + SendEmailVerificationAsync() : Task
+  }
+
+  class FirebaseFirestore <<external>> {
+    + Collection(path : string) : CollectionReference
+  }
+
+  class DocumentReference <<external>> {
+    + GetSnapshotAsync() : Task<DocumentSnapshot>
+    + SetAsync(data : object) : Task
+    + UpdateAsync(field : string, value : object) : Task
+  }
+}
+
+' ============================ Quan hệ =================================
+LoginView ..> AuthService : gọi
+LoginView ..> AuthOutcome : nhận kết quả
+LoginView ..> AuthMessages : thông báo
+LoginView ..> SceneLoader : vào Main Menu
+
+AccountPanelView ..> AuthService : gọi
+AccountPanelView ..> AuthOutcome : nhận kết quả
+AccountPanelView ..> SceneLoader : về màn đăng nhập
+
+AuthService ..> UserProfileService : tạo / cập nhật hồ sơ
+AuthService ..> AuthOutcome : tạo
+AuthService ..> AuthMessages : dịch lỗi
+AuthService --> FirebaseAuth : sử dụng
+AuthService ..> FirebaseUser : CurrentUser
+
+UserProfileService --> FirebaseFirestore : sử dụng
+UserProfileService ..> DocumentReference : users/{uid}
+UserProfileService ..> AccountData : ghi
+
+FirebaseAuth "1" --> "0..1" FirebaseUser : CurrentUser
+FirebaseUser ..> UserAccount : ánh xạ
+DocumentReference ..> AccountData : lưu trữ
+UserAccount "1" -- "1" AccountData : uid
+
+@enduml

@@ -1,0 +1,76 @@
+@startuml uc09-level-up
+title UC9 - Level up and choose an upgrade
+hide footbox
+
+actor User as U
+participant PlayerProgression as PP
+participant LevelUpManager as LM
+participant GameManager as GM
+participant PlayerInventory as INV
+participant LevelUpPanel as UI
+participant Player as P
+
+[-> PP ++ : AddXP(amount)
+PP -> PP : Level += 1 while CurrentXP >= RequiredXP\nRequiredXP = 5 + Level * 10\nPendingLevelUps += levels gained
+PP -> LM ++ : OnLevelUpReady
+alt already choosing
+  LM -> LM : ignore (pending count is kept)
+else not choosing
+  LM -> GM ++ : EnterLevelUp()
+  GM -> GM : timeScale = 0
+  GM --> LM --
+  LM -> INV ++ : read weapons and passives
+  INV --> LM --
+  LM -> LM : RollOptions()
+  LM -> UI ++ : OnOptionsReady(options)
+  UI -> UI : show panel, fill cards
+  UI --> LM --
+end
+LM --> PP --
+deactivate PP
+
+note right of LM
+  RollOptions:
+  1. BuildCandidates (weapon levels, new weapons,
+     new passives, passive levels, stat cards)
+  2. Shuffle (Fisher-Yates)
+  3. take up to 3, max 1 stat card
+  4. fill with fallback (heal / gold)
+end note
+
+loop while PendingLevelUps > 0
+  U -> UI ++ : click card i
+  UI -> LM ++ : ChooseUpgrade(i)
+  alt NewWeapon / WeaponLevel
+    LM -> INV ++ : AddWeapon / weapon.LevelUp()
+    INV --> LM --
+  else NewPassive / PassiveLevel
+    LM -> INV ++ : AddPassive / LevelUpPassive
+    INV -> P ++ : ApplyStatModifier(stat, value, kind)
+    P --> INV --
+    INV --> LM --
+  else StatCard
+    LM -> P ++ : ApplyStatModifier(stat, value, kind)\nHeal(healAmount)
+    P --> LM --
+  else Fallback heal
+    LM -> P ++ : Heal(30)
+    P --> LM --
+  else Fallback gold
+    LM -> PP ++ : AddGold(20)
+    PP --> LM --
+  end
+  LM -> PP ++ : ConsumePendingLevelUp()
+  PP --> LM --
+  alt PendingLevelUps > 0
+    LM -> LM : RollOptions()
+    LM -> UI : OnOptionsReady(options)\nshow new cards
+  else PendingLevelUps == 0
+    LM -> UI : OnClosed\nhide panel
+    LM -> GM ++ : ResumePlaying()
+    GM -> GM : timeScale = 1
+    GM --> LM --
+  end
+  LM --> UI --
+  deactivate UI
+end
+@enduml

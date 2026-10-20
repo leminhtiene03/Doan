@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8df11ebf8dcca4a9ed0784470ee182, type: 3}
+  m_Name: WeaponData
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.WeaponData
+  id: 1
+  displayName: Kiem chem
+  description: 
+  icon: {fileID: 769103235, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
+  weaponPrefab: {fileID: 4695338783263782723, guid: 2afa78f8be0b43c4eb8b5e0ee51c4e80, type: 3}
+  effectPrefab: {fileID: 0}
+  aimMode: 0
+  damageType: 0
+  isStartingWeapon: 0
+  playOwnerAttackAnim: 1
+  levels:
+  - damage: 10
+    attackInterval: 1.2
+    size: 2
+    projectiles: 0
+    arcAngle: 120
+    knockback: 0
+    upgradeDescription: 'Damage enemy with sword '
+  - damage: 12.5
+    attackInterval: 1.2
+    size: 2
+    projectiles: 0
+    arcAngle: 120
+    knockback: 0
+    upgradeDescription: 25% damage
+  - damage: 12.5
+    attackInterval: 1.2
+    size: 2.5
+    projectiles: 0
+    arcAngle: 120
+    knockback: 0
+    upgradeDescription: ' attack area bigger 25%'
+  - damage: 12.5
+    attackInterval: 1.2
+    size: 2.5
+    projectiles: 0
+    arcAngle: 240
+    knockback: 0
+    upgradeDescription: from 120 to 240 degree area
+  - damage: 15
+    attackInterval: 1.2
+    size: 2.5
+    projectiles: 0
+    arcAngle: 360
+    knockback: 0
+    upgradeDescription: 'more damage, 360 degree area '

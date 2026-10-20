@@ -1,0 +1,56 @@
+@startuml uc06-spawn-and-update
+title UC6 - Spawn and update enemies
+hide footbox
+
+participant "SpawnManager\n<<planned>>" as SRC
+participant EnemyManager as EM
+participant PoolManager as PM
+participant Enemy as E
+participant Player as P
+
+SRC -> EM ++ : Spawn(data, offscreenPosition)
+EM -> PM ++ : Get(data.Prefab, position)
+alt pool has an inactive instance
+  PM -> PM : take instance
+else pool empty
+  PM -> PM : Instantiate(prefab)
+end
+PM -> E ++ : SetActive(true)
+E --> PM --
+PM --> EM -- : enemy
+EM -> E ++ : Init(data)
+E --> EM --
+EM -> E ++ : OnDeath -= enemyDeathHandler
+E --> EM --
+EM -> E ++ : OnDeath += enemyDeathHandler
+E --> EM --
+note right of E
+  The handler is not removed on Release.
+  Removing it before adding keeps exactly
+  one subscription for a reused enemy
+end note
+EM -> EM : Register(enemy)\nListIndex = Count, add to Active
+EM --> SRC -- : enemy
+
+loop every frame while GameState == Playing (last to first)
+  [-> EM ++ : Update()
+  EM -> E ++ : Tick(playerPosition, deltaTime)
+  E --> EM --
+  alt IsReadyToDespawn
+    ref over EM, PM, E : UC7 - Enemy death and despawn
+  else still active
+    EM -> E ++ : TryContact(playerPosition)
+    E --> EM -- : contact
+    opt contact
+      EM -> P ++ : TakeDamage(CreateContactDamage())
+      ref over P : UC5 - Player takes damage
+      P --> EM --
+    end
+    opt distance² > relocateDistance²
+      EM -> E ++ : Teleport(ahead of player MoveDirection ± spread)
+      E --> EM --
+    end
+  end
+  deactivate EM
+end
+@enduml

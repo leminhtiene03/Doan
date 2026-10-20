@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8df11ebf8dcca4a9ed0784470ee182, type: 3}
+  m_Name: WeaponData_ThrowingDagger
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.WeaponData
+  id: throwing_dagger
+  displayName: Throwing Dagger
+  description: "Throws fast daggers toward the cursor."
+  icon: {fileID: 0}
+  weaponPrefab: {fileID: 7900000000000000003, guid: 99f3f192a59f4202bd58800feb9edbca, type: 3}
+  effectPrefab: {fileID: 0}
+  projectilePrefab: {fileID: 7600000000000000006, guid: e54cd2b096bb4ab8a45c35e6cfc5ade1, type: 3}
+  aimMode: 0
+  damageType: 0
+  isStartingWeapon: 0
+  playOwnerAttackAnim: 0
+  levels:
+  - damage: 6
+    attackInterval: 0.8
+    size: 1
+    projectiles: 1
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0.05
+    slowAmount: 0
+    slowDuration: 0
+    upgradeDescription: "Throws a fast dagger toward the cursor"
+  - damage: 6
+    attackInterval: 0.8
+    size: 1
+    projectiles: 2
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0.05
+    slowAmount: 0
+    slowDuration: 0
+    upgradeDescription: "+1 dagger"
+  - damage: 9
+    attackInterval: 0.8
+    size: 1
+    projectiles: 2
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0.05
+    slowAmount: 0
+    slowDuration: 0
+    upgradeDescription: "+3 damage"
+  - damage: 9
+    attackInterval: 0.8
+    size: 1
+    projectiles: 3
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0.05
+    slowAmount: 0
+    slowDuration: 0
+    upgradeDescription: "+1 dagger"
+  - damage: 12
+    attackInterval: 0.64
+    size: 1
+    projectiles: 3
+    arcAngle: 0
+    knockback: 0
+    projectileSpeed: 14
+    range: 12
+    pierce: 0
+    impactRadius: 0
+    burstInterval: 0.05
+    slowAmount: 0
+    slowDuration: 0
+    upgradeDescription: "+3 damage, -20% interval"
+  evolution: {fileID: 11400000, guid: 240e8903fd964f47b795e6b476a10f8e, type: 2}
+  evolutionItem: {fileID: 11400000, guid: c9e58a3c6187423ba2346a291dfc7883, type: 2}
