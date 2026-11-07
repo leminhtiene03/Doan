@@ -15,7 +15,7 @@ MonoBehaviour:
   id: magnet
   displayName: Magnet
   description: "+25% pickup radius per level. Evolves Poison Flask."
-  icon: {fileID: 0}
+  icon: {fileID: 345434785, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 8
   modifierKind: 1
   valuePerLevel: 0.25

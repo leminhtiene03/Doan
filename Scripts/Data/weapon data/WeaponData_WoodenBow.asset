@@ -31,7 +31,7 @@ MonoBehaviour:
     arcAngle: 15
     knockback: 0
     projectileSpeed: 12
-    range: 10
+    range: 14
     pierce: 0
     upgradeDescription: Shoots arrows toward the cursor
   - damage: 10
@@ -41,7 +41,7 @@ MonoBehaviour:
     arcAngle: 15
     knockback: 0
     projectileSpeed: 12
-    range: 10
+    range: 14
     pierce: 0
     upgradeDescription: +25% damage
   - damage: 10
@@ -51,7 +51,7 @@ MonoBehaviour:
     arcAngle: 15
     knockback: 0
     projectileSpeed: 12
-    range: 10
+    range: 14
     pierce: 0
     upgradeDescription: +20% size
   - damage: 10
@@ -61,7 +61,7 @@ MonoBehaviour:
     arcAngle: 15
     knockback: 0
     projectileSpeed: 12
-    range: 10
+    range: 14
     pierce: 0
     upgradeDescription: +1 arrow
   - damage: 12.5
@@ -71,6 +71,6 @@ MonoBehaviour:
     arcAngle: 15
     knockback: 0
     projectileSpeed: 12
-    range: 10
+    range: 14
     pierce: 0
     upgradeDescription: +25% damage, -10% attack interval

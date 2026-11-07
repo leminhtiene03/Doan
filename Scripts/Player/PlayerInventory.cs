@@ -16,11 +16,20 @@ namespace Game.Player
         public IReadOnlyList<Weapon> Weapons => weapons;
         public IReadOnlyList<PassiveItem> Passives => passives;
 
+        public event System.Action OnChanged;
+
         public void AddWeapon(WeaponData weaponData)
         {
             Weapon weapon = Object.Instantiate(weaponData.WeaponPrefab, owner.transform);
             weapon.Equip(owner, weaponData);
             weapons.Add(weapon);
+            OnChanged?.Invoke();
+        }
+
+        public void LevelUpWeapon(Weapon weapon)
+        {
+            weapon.LevelUp();
+            OnChanged?.Invoke();
         }
 
         public void EvolveWeapon(Weapon weapon)
@@ -32,18 +41,21 @@ namespace Game.Player
             weapon.Unequip();
             Object.Destroy(weapon.gameObject);
             weapons[index] = evolved;
+            OnChanged?.Invoke();
         }
 
         public void AddPassive(PassiveItemData passiveData)
         {
             passives.Add(new PassiveItem(passiveData));
             ApplyPassiveLevel(passiveData);
+            OnChanged?.Invoke();
         }
 
         public void LevelUpPassive(PassiveItem passive)
         {
             passive.LevelUp();
             ApplyPassiveLevel(passive.Data);
+            OnChanged?.Invoke();
         }
 
         public bool HasWeapon(WeaponData weaponData)

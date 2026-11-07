@@ -15,7 +15,7 @@ MonoBehaviour:
   id: twin_charm
   displayName: Twin Charm
   description: "+1 projectile per level. Evolves Ice Shard."
-  icon: {fileID: 0}
+  icon: {fileID: 931214168, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 7
   modifierKind: 0
   valuePerLevel: 1

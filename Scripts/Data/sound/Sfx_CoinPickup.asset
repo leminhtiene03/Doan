@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e454aa26d8cf00a478cdbfb6a1fbe387, type: 3}
+  m_Name: Sfx_CoinPickup
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Data.SoundData
+  clips:
+  - {fileID: 8300000, guid: 2a0cc3ddfaa2e6b49a9a7cb430be7f63, type: 3}
+  - {fileID: 8300000, guid: 4e80b5b31eac29a4f93e582a7209e9d0, type: 3}
+  - {fileID: 8300000, guid: e242e4ff64b270148a6c108527f83400, type: 3}
+  volume: 0.5
+  pitchVariance: 0.1
+  minInterval: 0.05

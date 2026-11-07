@@ -15,7 +15,7 @@ MonoBehaviour:
   id: hourglass
   displayName: Hourglass
   description: "+10% Duration per level. Evolves Orbiting Orbs."
-  icon: {fileID: 0}
+  icon: {fileID: -1741635634, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 10
   modifierKind: 1
   valuePerLevel: 0.1

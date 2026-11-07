@@ -15,7 +15,7 @@ MonoBehaviour:
   id: warrior_gauntlet
   displayName: Warrior Gauntlet
   description: "+10% Might per level. Evolves Spirit Sword."
-  icon: {fileID: 0}
+  icon: {fileID: -1349709863, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 4
   modifierKind: 1
   valuePerLevel: 0.1

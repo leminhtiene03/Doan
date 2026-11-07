@@ -15,7 +15,7 @@ MonoBehaviour:
   id: heavy_strike
   displayName: Heavy Strike
   description: Heavy melee strike with strong knockback.
-  icon: {fileID: 0}
+  icon: {fileID: 302178523, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 4695338783263782723, guid: 2afa78f8be0b43c4eb8b5e0ee51c4e80, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 0}

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: orbiting_orbs
   displayName: Orbiting Orbs
   description: "Magic orbs circle around you."
-  icon: {fileID: 0}
+  icon: {fileID: 813950757, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 8700000000000000003, guid: e8658ff2632d48e396dca06c4b50c908, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 0}

@@ -22,6 +22,7 @@ namespace Game.Enemies
         [SerializeField] private float relocateSpreadAngle = 45f;
         [SerializeField] private MapBounds mapBounds;
         [SerializeField] private int spawnAttempts = 12;
+        [SerializeField] private float freeSearchRadius = 8f;
 
         private readonly List<Enemy> active = new(300);
         private Action<Enemy> enemyDeathHandler;
@@ -156,6 +157,30 @@ namespace Game.Enemies
 
         public Vector2 ClampToMap(Vector2 position) => mapBounds != null ? mapBounds.ClampInside(position) : position;
 
+        public bool IsSpawnable(Vector2 position) => mapBounds == null || mapBounds.IsFree(position);
+
+        public bool IsOffscreen(Vector2 position)
+        {
+            Vector2 offset = position - CameraCenter;
+            return Mathf.Abs(offset.x) >= spawnHalfExtents.x || Mathf.Abs(offset.y) >= spawnHalfExtents.y;
+        }
+
+        public Vector2 FindFreeNear(Vector2 position)
+        {
+            Vector2 origin = ClampToMap(position);
+            if (IsSpawnable(origin) && IsOffscreen(origin))
+                return origin;
+            Vector2 outward = (origin - CameraCenter).normalized;
+            for (int i = 1; i <= spawnAttempts; i++)
+            {
+                float distance = freeSearchRadius * i / spawnAttempts;
+                Vector2 candidate = ClampToMap(origin + (outward + Random.insideUnitCircle) * distance);
+                if (IsSpawnable(candidate) && IsOffscreen(candidate))
+                    return candidate;
+            }
+            return FindSpawnPosition(Mathf.Atan2(outward.y, outward.x) * Mathf.Rad2Deg, 180f);
+        }
+
         public Vector2 GetScreenEdgeInsideMap()
         {
             Vector2 edge = GetScreenEdgePosition(Random.Range(0f, 360f));
@@ -245,8 +270,6 @@ namespace Game.Enemies
             }
             return ClampToMap(GetSpawnBandPosition(AngleToMapCenter()));
         }
-
-        private bool IsSpawnable(Vector2 position) => mapBounds == null || mapBounds.IsFree(position);
 
         private float AngleToMapCenter()
         {

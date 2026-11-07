@@ -15,7 +15,7 @@ MonoBehaviour:
   id: poison_flask
   displayName: Poison Flask
   description: "Leaves poison pools on random nearby enemies."
-  icon: {fileID: 0}
+  icon: {fileID: -194541664, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 9100000000000000003, guid: 6706f0800c3b41318db7cac727b4fb97, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 0}

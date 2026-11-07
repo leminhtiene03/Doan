@@ -15,7 +15,7 @@ MonoBehaviour:
   id: spirit_sword
   displayName: Spirit Sword
   description: "Swords that home in on the nearest enemy."
-  icon: {fileID: 0}
+  icon: {fileID: -1865492378, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 8600000000000000003, guid: 7ef85b4fa2904fc28a0259f77bc7b1e9, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 8300000000000000006, guid: a69caba556794951b710b5b1a0f27f7f, type: 3}

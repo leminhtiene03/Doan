@@ -54,6 +54,24 @@ namespace Game.Online
         public static Task<AuthOutcome> SendPasswordResetAsync(string email)
             => RunAsync(() => Auth.SendPasswordResetEmailAsync(email), AuthMessages.ResetEmailSent);
 
+        public static async Task<AuthOutcome> ChangePasswordAsync(string currentPassword, string newPassword)
+        {
+            if (CurrentUser == null || string.IsNullOrEmpty(CurrentUser.Email))
+                return AuthOutcome.Fail(AuthMessages.NotSignedIn);
+
+            AuthOutcome outcome = await RunAsync(async () =>
+            {
+                FirebaseUser user = CurrentUser;
+                Credential credential = EmailAuthProvider.GetCredential(user.Email, currentPassword);
+                await user.ReauthenticateAsync(credential);
+                await user.UpdatePasswordAsync(newPassword);
+            }, AuthMessages.PasswordChanged);
+
+            return !outcome.Success && outcome.Message == AuthMessages.WrongCredentials
+                ? AuthOutcome.Fail(AuthMessages.WrongCurrentPassword)
+                : outcome;
+        }
+
         public static void SignOut()
         {
             if (IsReady)

@@ -21,6 +21,7 @@ namespace Game.Core
         [SerializeField] private PlayerProgression progression;
         [SerializeField] private CinemachineCamera followCamera;
         [SerializeField] private Vector2 playerSpawnPosition;
+        [SerializeField] private RunScriptData runScript;
 
         public event Action<GameState> OnStateChanged;
         public event Action<float> OnRunTimeSkipped;
@@ -30,6 +31,8 @@ namespace Game.Core
         public float RunTime { get; private set; }
         public DifficultyData Difficulty { get; private set; }
         public Player Player { get; private set; }
+        public float RunDuration => runScript != null ? runScript.RunDuration : float.PositiveInfinity;
+        public bool IsRunFinished => State == GameState.GameOver || State == GameState.Victory;
 
         private void Awake()
         {
@@ -44,8 +47,10 @@ namespace Game.Core
 
         private void Update()
         {
-            if (IsPlaying)
-                RunTime += Time.deltaTime;
+            if (!IsPlaying)
+                return;
+            RunTime += Time.deltaTime;
+            CheckVictory();
         }
 
         private void OnEnable()
@@ -108,7 +113,19 @@ namespace Game.Core
             Player.RestoreFullHealth();
         }
 
-        private void HandlePlayerDeath() => SetState(GameState.GameOver);
+        private void CheckVictory()
+        {
+            if (RunTime < RunDuration)
+                return;
+            RunTime = RunDuration;
+            SetState(GameState.Victory);
+        }
+
+        private void HandlePlayerDeath()
+        {
+            if (!IsRunFinished)
+                SetState(GameState.GameOver);
+        }
 
         private void SetState(GameState nextState)
         {

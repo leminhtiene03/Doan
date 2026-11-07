@@ -113,7 +113,7 @@ namespace Game.DebugTools
             for (int i = 0; i < weapons.Count; i++)
             {
                 while (!weapons[i].IsMaxLevel)
-                    weapons[i].LevelUp();
+                    player.Inventory.LevelUpWeapon(weapons[i]);
             }
         }
 
@@ -166,10 +166,10 @@ namespace Game.DebugTools
 
         private void DrawGameOver()
         {
-            if (GameManager.Instance.State != GameState.GameOver)
+            if (!GameManager.Instance.IsRunFinished)
                 return;
 
-            GUILayout.Label("GAME OVER");
+            GUILayout.Label(GameManager.Instance.State == GameState.Victory ? "VICTORY" : "GAME OVER");
             if (GUILayout.Button("Restart"))
                 GameManager.Instance.RestartRun();
         }

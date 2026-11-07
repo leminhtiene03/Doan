@@ -13,9 +13,9 @@ namespace Game.Enemies
         private const float KnockbackDuration = 0.1f;
         private const float MaxBodyReach = 3f;
 
-        private static readonly int IdleHash = Animator.StringToHash("Idle");
-        private static readonly int MoveHash = Animator.StringToHash("Move");
-        private static readonly int AttackHash = Animator.StringToHash("Attack");
+        protected static readonly int IdleHash = Animator.StringToHash("Idle");
+        protected static readonly int MoveHash = Animator.StringToHash("Move");
+        protected static readonly int AttackHash = Animator.StringToHash("Attack");
         private static readonly int DieHash = Animator.StringToHash("Die");
 
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -61,7 +61,12 @@ namespace Game.Enemies
         public bool IsTraveling => travelDirection != Vector2.zero;
         public bool IsReadyToDespawn => IsDead && stateTimer <= 0f;
 
-        private float AttackDuration => attackClip != null ? attackClip.length : Data.AttackHitTime;
+        protected float AttackDuration => attackClip != null ? attackClip.length : Data.AttackHitTime;
+        protected Rigidbody2D Body => body;
+        protected Vector2 TravelDirection => travelDirection;
+        protected bool HasIdleAnimation => hasIdleAnimation;
+        protected float SlowFactor => 1f - slowAmount;
+        protected float CurrentMoveSpeed => moveSpeed * SlowFactor;
 
         private void Awake()
         {
@@ -90,6 +95,7 @@ namespace Game.Enemies
                 animator.Rebind();
             hasIdleAnimation = animator != null && animator.HasState(0, IdleHash);
             PlayAnimation(MoveHash);
+            ResetBehavior();
             EnterSpawning();
         }
 
@@ -172,6 +178,7 @@ namespace Game.Enemies
             body.linearVelocity = Vector2.zero;
             body.simulated = false;
             flashTimer = 0f;
+            ResetBehavior();
             ApplyTint();
             PlayAnimation(DieHash);
             OnDeath?.Invoke(this);
@@ -204,14 +211,23 @@ namespace Game.Enemies
                 state = EnemyState.Chase;
         }
 
-        private void TickChase(Vector2 playerPosition, Collider2D playerCollider, float deltaTime)
+        protected virtual void ResetBehavior() { }
+
+        protected void LandAttack() => attackLanded = true;
+
+        protected void FaceToward(Vector2 direction)
+        {
+            if (Mathf.Abs(direction.x) >= faceTurnThreshold)
+                Face(direction.x < 0f);
+        }
+
+        protected virtual void TickChase(Vector2 playerPosition, Collider2D playerCollider, float deltaTime)
         {
             Vector2 moveDirection = IsTraveling ? travelDirection : (playerPosition - body.position).normalized;
-            if (Mathf.Abs(moveDirection.x) >= faceTurnThreshold)
-                Face(moveDirection.x < 0f);
+            FaceToward(moveDirection);
             if (!IsInAttackRange(playerPosition, playerCollider))
             {
-                SetVelocity(moveDirection * (moveSpeed * (1f - slowAmount)), deltaTime);
+                SetVelocity(moveDirection * CurrentMoveSpeed, deltaTime);
                 SetLocomotionAnimation(MoveHash);
                 return;
             }
@@ -246,13 +262,16 @@ namespace Game.Enemies
         }
 
         private bool IsInAttackRange(Vector2 playerPosition, Collider2D playerCollider)
+            => IsWithinReach(playerPosition, playerCollider, Data.AttackRange);
+
+        protected bool IsWithinReach(Vector2 playerPosition, Collider2D playerCollider, float reach)
         {
-            float coarseReach = Data.AttackRange + MaxBodyReach;
+            float coarseReach = reach + MaxBodyReach;
             if ((playerPosition - body.position).sqrMagnitude > coarseReach * coarseReach)
                 return false;
 
             ColliderDistance2D gap = bodyCollider.Distance(playerCollider);
-            return gap.isValid && gap.distance <= Data.AttackRange;
+            return gap.isValid && gap.distance <= reach;
         }
 
         private void StartKnockback(Vector2 displacement)
@@ -263,7 +282,7 @@ namespace Game.Enemies
             knockbackTimer = KnockbackDuration;
         }
 
-        private void SetVelocity(Vector2 desired, float deltaTime)
+        protected void SetVelocity(Vector2 desired, float deltaTime)
         {
             Vector2 pull = pullVelocity;
             pullVelocity = Vector2.zero;
@@ -276,13 +295,13 @@ namespace Game.Enemies
             body.linearVelocity = desired + pull;
         }
 
-        private void SetLocomotionAnimation(int stateHash)
+        protected void SetLocomotionAnimation(int stateHash)
         {
             if (currentAnimation != stateHash)
                 PlayAnimation(stateHash);
         }
 
-        private void PlayAnimation(int stateHash)
+        protected void PlayAnimation(int stateHash)
         {
             currentAnimation = stateHash;
             if (animator != null)

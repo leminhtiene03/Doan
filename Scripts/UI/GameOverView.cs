@@ -15,6 +15,8 @@ namespace Game.UI
         private const string AccountGoldFormat = "+{0:0} gold";
         private const string RankFormat = "Rank {0:0}";
         private const string NewBestRankFormat = "Rank {0:0}  New best!";
+        private const string DefeatTitle = "GAME OVER";
+        private const string VictoryTitle = "VICTORY";
 
         [SerializeField] private GameManager gameManager;
         [SerializeField] private RunScoreTracker scoreTracker;
@@ -26,6 +28,7 @@ namespace Game.UI
         [SerializeField] private TMP_Text rankText;
         [SerializeField] private TMP_Text accountGoldText;
         [SerializeField] private LeaderboardListView leaderboardList;
+        [SerializeField] private TMP_Text titleText;
 
         private void Awake()
         {
@@ -54,7 +57,13 @@ namespace Game.UI
             resultUploader.OnSavedOffline -= ShowSavedOffline;
         }
 
-        private void HandleStateChanged(GameState state) => panelRoot.SetActive(state == GameState.GameOver);
+        private void HandleStateChanged(GameState state)
+        {
+            bool isFinished = state == GameState.GameOver || state == GameState.Victory;
+            panelRoot.SetActive(isFinished);
+            if (isFinished && titleText != null)
+                titleText.SetText(state == GameState.Victory ? VictoryTitle : DefeatTitle);
+        }
 
         private void ShowResult(RunResult result)
         {

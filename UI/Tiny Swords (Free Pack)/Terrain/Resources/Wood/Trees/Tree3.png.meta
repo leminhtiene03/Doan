@@ -58,7 +58,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +72,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 24
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -98,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,17 +126,22 @@ TextureImporter:
       name: Tree3_0
       rect:
         serializedVersion: 2
-        x: 50
-        y: 21
-        width: 92
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: 8, y: -68}
+        - {x: 9, y: -58}
+        - {x: 2, y: -57}
+        - {x: -8, y: -58}
+        - {x: -7, y: -66}
+      tessellationDetail: 0
       bones: []
       spriteID: 62ae1cc93cc323c40800000000000000
       internalID: 5490517706564299302
@@ -148,17 +153,17 @@ TextureImporter:
       name: Tree3_1
       rect:
         serializedVersion: 2
-        x: 243
-        y: 21
-        width: 91
-        height: 149
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 192
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 6efc39c16a7586750800000000000000
       internalID: 6298380449833275366
@@ -170,17 +175,17 @@ TextureImporter:
       name: Tree3_2
       rect:
         serializedVersion: 2
-        x: 435
-        y: 21
-        width: 91
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 384
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: df9f9cee21f813720800000000000000
       internalID: 2824195752816409085
@@ -192,17 +197,17 @@ TextureImporter:
       name: Tree3_3
       rect:
         serializedVersion: 2
-        x: 627
-        y: 21
-        width: 91
-        height: 147
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 576
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 48e37e8ff92f29010800000000000000
       internalID: 1194283620096228996
@@ -214,17 +219,17 @@ TextureImporter:
       name: Tree3_4
       rect:
         serializedVersion: 2
-        x: 818
-        y: 21
-        width: 93
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 768
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: dc2339747dbfb0610800000000000000
       internalID: 1588640195615601357
@@ -236,17 +241,17 @@ TextureImporter:
       name: Tree3_5
       rect:
         serializedVersion: 2
-        x: 1010
-        y: 21
-        width: 92
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 960
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 5d475d95c117b6540800000000000000
       internalID: 5002216177705252053
@@ -258,17 +263,17 @@ TextureImporter:
       name: Tree3_6
       rect:
         serializedVersion: 2
-        x: 1201
-        y: 21
-        width: 92
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1152
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: cbeb44fc594df37b0800000000000000
       internalID: -5242237701343363396
@@ -280,17 +285,22 @@ TextureImporter:
       name: Tree3_7
       rect:
         serializedVersion: 2
-        x: 1392
-        y: 21
-        width: 94
-        height: 148
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 1344
+        y: 0
+        width: 192
+        height: 192
+      alignment: 9
+      pivot: {x: 0.5, y: 0.29}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: 8, y: -68}
+        - {x: 9, y: -58}
+        - {x: 2, y: -57}
+        - {x: -8, y: -58}
+        - {x: -7, y: -66}
+      tessellationDetail: 0
       bones: []
       spriteID: 4fdf31428fc247de0800000000000000
       internalID: -1336393745153393164
@@ -302,7 +312,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4256b18338f946947a62fc258140b1f4
     internalID: 0
     vertices: []
     indices: 
@@ -310,7 +320,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":192.0,"y":192.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.28999999165534973},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":9,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Tree3_0: 5490517706564299302
       Tree3_1: 6298380449833275366

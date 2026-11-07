@@ -15,7 +15,7 @@ MonoBehaviour:
   id: stat_move_speed
   displayName: Swiftness
   description: "+4% Move Speed."
-  icon: {fileID: 0}
+  icon: {fileID: 733980550, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 3
   modifierKind: 1
   value: 0.04

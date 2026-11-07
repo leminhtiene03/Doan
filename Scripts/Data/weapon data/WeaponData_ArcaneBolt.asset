@@ -31,7 +31,7 @@ MonoBehaviour:
     arcAngle: 10
     knockback: 0
     projectileSpeed: 16
-    range: 9
+    range: 13
     pierce: 0
     impactRadius: 0.8
     upgradeDescription: Fires a bolt that bursts in a small area on hit
@@ -42,7 +42,7 @@ MonoBehaviour:
     arcAngle: 10
     knockback: 0
     projectileSpeed: 16
-    range: 9
+    range: 13
     pierce: 0
     impactRadius: 0.8
     upgradeDescription: +25% damage
@@ -53,7 +53,7 @@ MonoBehaviour:
     arcAngle: 10
     knockback: 0
     projectileSpeed: 16
-    range: 9
+    range: 13
     pierce: 1
     impactRadius: 1.0
     upgradeDescription: +25% burst radius, pierces 1 more enemy
@@ -64,7 +64,7 @@ MonoBehaviour:
     arcAngle: 10
     knockback: 0
     projectileSpeed: 16
-    range: 9
+    range: 13
     pierce: 1
     impactRadius: 1.0
     upgradeDescription: +1 bolt
@@ -75,7 +75,7 @@ MonoBehaviour:
     arcAngle: 10
     knockback: 0
     projectileSpeed: 16
-    range: 9
+    range: 13
     pierce: 2
     impactRadius: 1.2
     upgradeDescription: +25% damage, +20% burst radius, pierces 1 more, -10% interval

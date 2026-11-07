@@ -15,7 +15,7 @@ MonoBehaviour:
   id: thorn_field
   displayName: Thorn Field
   description: "Huge caltrops that last 8 seconds and slow enemies by 40%."
-  icon: {fileID: 0}
+  icon: {fileID: 1741933928, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 9000000000000000003, guid: 7d7c11075e704f0692ab4c31b0734b1d, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 0}

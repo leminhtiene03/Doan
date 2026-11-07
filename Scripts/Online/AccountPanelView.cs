@@ -29,6 +29,17 @@ namespace Game.Online
         [SerializeField] private Button memberSignOutButton;
         [SerializeField] private Button changePasswordButton;
 
+        [Header("Change password panel")]
+        [SerializeField] private GameObject changePasswordPanel;
+        [SerializeField] private TMP_InputField currentPasswordInput;
+        [SerializeField] private TMP_InputField newPasswordInput;
+        [SerializeField] private TMP_InputField confirmNewPasswordInput;
+        [SerializeField] private Button submitPasswordButton;
+        [SerializeField] private Button closePasswordButton;
+        [SerializeField] private TMP_Text passwordStatusText;
+
+        private bool HasChangePasswordPanel => changePasswordPanel != null;
+
         private void Awake()
         {
             accountButton.onClick.AddListener(TogglePanel);
@@ -36,7 +47,7 @@ namespace Game.Online
             guestCloseButton.onClick.AddListener(ClosePanels);
             guestSignOutButton.onClick.AddListener(HandleGuestSignOut);
             memberSignOutButton.onClick.AddListener(SignOut);
-            changePasswordButton.interactable = false;
+            SetUpChangePassword();
             ClosePanels();
         }
 
@@ -57,7 +68,8 @@ namespace Game.Online
 
         private void TogglePanel()
         {
-            bool isOpen = guestPanel.activeSelf || memberPanel.activeSelf;
+            bool isOpen = guestPanel.activeSelf || memberPanel.activeSelf
+                || (HasChangePasswordPanel && changePasswordPanel.activeSelf);
             ClosePanels();
             if (isOpen)
                 return;
@@ -77,6 +89,71 @@ namespace Game.Online
             memberPanel.SetActive(false);
             signOutWarning.SetActive(false);
             statusText.SetText(string.Empty);
+            CloseChangePassword();
+        }
+
+        private void SetUpChangePassword()
+        {
+            changePasswordButton.interactable = HasChangePasswordPanel;
+            if (!HasChangePasswordPanel)
+                return;
+            changePasswordButton.onClick.AddListener(OpenChangePassword);
+            submitPasswordButton.onClick.AddListener(() => _ = SubmitChangePasswordAsync());
+            closePasswordButton.onClick.AddListener(BackToMemberPanel);
+        }
+
+        private void OpenChangePassword()
+        {
+            currentPasswordInput.text = string.Empty;
+            newPasswordInput.text = string.Empty;
+            confirmNewPasswordInput.text = string.Empty;
+            passwordStatusText.SetText(string.Empty);
+            submitPasswordButton.interactable = true;
+            memberPanel.SetActive(false);
+            changePasswordPanel.SetActive(true);
+        }
+
+        private void CloseChangePassword()
+        {
+            if (HasChangePasswordPanel)
+                changePasswordPanel.SetActive(false);
+        }
+
+        private void BackToMemberPanel()
+        {
+            CloseChangePassword();
+            memberPanel.SetActive(true);
+        }
+
+        private async Task SubmitChangePasswordAsync()
+        {
+            string currentPassword = currentPasswordInput.text;
+            string newPassword = newPasswordInput.text;
+            string error = string.IsNullOrEmpty(currentPassword) ? AuthMessages.EnterCurrentPassword
+                : newPassword.Length < AuthService.MinPasswordLength ? AuthMessages.PasswordTooShort
+                : newPassword != confirmNewPasswordInput.text ? AuthMessages.PasswordsDoNotMatch
+                : newPassword == currentPassword ? AuthMessages.SamePassword
+                : null;
+            if (error != null)
+            {
+                passwordStatusText.SetText(error);
+                return;
+            }
+
+            submitPasswordButton.interactable = false;
+            passwordStatusText.SetText(AuthMessages.Working);
+            AuthOutcome outcome = await AuthService.ChangePasswordAsync(currentPassword, newPassword);
+            if (this == null)
+                return;
+
+            submitPasswordButton.interactable = true;
+            passwordStatusText.SetText(outcome.Message);
+            if (outcome.Success)
+            {
+                currentPasswordInput.text = string.Empty;
+                newPasswordInput.text = string.Empty;
+                confirmNewPasswordInput.text = string.Empty;
+            }
         }
 
         private void HandleGuestSignOut()

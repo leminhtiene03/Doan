@@ -23,6 +23,7 @@ namespace Game.Audio
         [SerializeField] private SoundData levelUp;
         [SerializeField] private SoundData chestOpen;
         [SerializeField] private SoundData gameOver;
+        [SerializeField] private SoundData victory;
 
         private Player player;
 
@@ -86,10 +87,13 @@ namespace Game.Audio
 
         private void HandleStateChanged(GameState state)
         {
-            if (state != GameState.GameOver)
+            if (state != GameState.GameOver && state != GameState.Victory)
                 return;
             AudioManager.StopMusic();
-            AudioManager.Play(gameOver);
+            if (state == GameState.Victory && victory != null)
+                AudioManager.PlayMusic(victory);
+            else
+                AudioManager.Play(gameOver);
         }
     }
 }

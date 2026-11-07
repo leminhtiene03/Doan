@@ -184,7 +184,7 @@ namespace Game.Progression
                     player.Inventory.AddWeapon(option.WeaponData);
                     break;
                 case UpgradeKind.WeaponLevel:
-                    option.Weapon.LevelUp();
+                    player.Inventory.LevelUpWeapon(option.Weapon);
                     break;
                 case UpgradeKind.Evolution:
                     player.Inventory.EvolveWeapon(option.Weapon);

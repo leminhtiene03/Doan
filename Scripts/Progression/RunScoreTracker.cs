@@ -16,6 +16,7 @@ namespace Game.Progression
         [SerializeField] private PlayerProgression progression;
 
         public event Action<RunResult> OnRunFinished;
+        public event Action<int> OnKillsChanged;
 
         public int Kills { get; private set; }
         public int KilledXP { get; private set; }
@@ -47,12 +48,15 @@ namespace Game.Progression
         {
             Kills++;
             KilledXP += enemy.Data.XpDrop;
+            OnKillsChanged?.Invoke(Kills);
         }
 
         private void HandleStateChanged(GameState state)
         {
             if (state == GameState.GameOver)
                 FinishRun(false);
+            else if (state == GameState.Victory)
+                FinishRun(true);
         }
 
         private void FinishRun(bool victory)

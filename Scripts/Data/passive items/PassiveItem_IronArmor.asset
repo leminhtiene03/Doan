@@ -15,7 +15,7 @@ MonoBehaviour:
   id: iron_armor
   displayName: Iron Armor
   description: "+1 Armor per level. Evolves Caltrops."
-  icon: {fileID: 0}
+  icon: {fileID: -1354210231, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 2
   modifierKind: 0
   valuePerLevel: 1

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: thousand_blades
   displayName: Thousand Blades
   description: "Throws daggers nonstop; each dagger pierces 2 enemies."
-  icon: {fileID: 0}
+  icon: {fileID: 924800179, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 7900000000000000003, guid: 99f3f192a59f4202bd58800feb9edbca, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 7600000000000000006, guid: e54cd2b096bb4ab8a45c35e6cfc5ade1, type: 3}

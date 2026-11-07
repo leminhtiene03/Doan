@@ -20,6 +20,8 @@ namespace Game.UI
         [SerializeField] private TMP_Text goldText;
         [SerializeField] private TMP_Text timeText;
         [SerializeField] private TMP_Text levelText;
+        [SerializeField] private RunScoreTracker scoreTracker;
+        [SerializeField] private TMP_Text killsText;
 
         private int shownHealth = -1;
         private int shownMaxHealth = -1;
@@ -33,6 +35,7 @@ namespace Game.UI
             progression.OnXPChanged += UpdateXP;
             progression.OnGoldChanged += UpdateGold;
             progression.OnLevelChanged += UpdateLevel;
+            scoreTracker.OnKillsChanged += UpdateKills;
         }
 
         private void OnDisable()
@@ -41,6 +44,7 @@ namespace Game.UI
             progression.OnXPChanged -= UpdateXP;
             progression.OnGoldChanged -= UpdateGold;
             progression.OnLevelChanged -= UpdateLevel;
+            scoreTracker.OnKillsChanged -= UpdateKills;
         }
 
         private void Start()
@@ -49,6 +53,7 @@ namespace Game.UI
             UpdateXP(progression.CurrentXP, progression.RequiredXP);
             UpdateGold(progression.Gold);
             UpdateLevel(progression.Level);
+            UpdateKills(scoreTracker.Kills);
         }
 
         private void Update() => UpdateTime(GameManager.Instance.RunTime);
@@ -71,6 +76,8 @@ namespace Game.UI
         private void UpdateGold(int gold) => goldText.SetText("{0:0}", (float)gold);
 
         private void UpdateLevel(int level) => levelText.SetText("{0:0}", (float)level);
+
+        private void UpdateKills(int kills) => killsText.SetText("{0:0}", (float)kills);
 
         private void UpdateTime(float runTime)
         {

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: marksman_glove
   displayName: Marksman Glove
   description: "+8% Attack Speed per level. Evolves Throwing Dagger."
-  icon: {fileID: 0}
+  icon: {fileID: -913479357, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 5
   modifierKind: 1
   valuePerLevel: 0.08

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: regen_ring
   displayName: Regen Ring
   description: "+0.2 HP per second per level."
-  icon: {fileID: 0}
+  icon: {fileID: -274394425, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 1
   modifierKind: 0
   valuePerLevel: 0.2

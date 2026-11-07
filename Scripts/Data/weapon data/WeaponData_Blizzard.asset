@@ -15,7 +15,7 @@ MonoBehaviour:
   id: blizzard
   displayName: Blizzard
   description: "Fires 8 ice shards in every direction; hits freeze enemies for 1 second."
-  icon: {fileID: 0}
+  icon: {fileID: -671197924, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 8000000000000000003, guid: d7c3a629cd874e6ca39bd2ae1264f65a, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 7700000000000000006, guid: c4c117c721e54460a2a7e7f65fe9423b, type: 3}

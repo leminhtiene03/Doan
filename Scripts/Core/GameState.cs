@@ -5,6 +5,7 @@ namespace Game.Core
         Playing,
         LevelUp,
         GameOver,
-        Paused
+        Paused,
+        Victory
     }
 }

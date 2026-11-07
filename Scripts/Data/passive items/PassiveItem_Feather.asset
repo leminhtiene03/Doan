@@ -15,7 +15,7 @@ MonoBehaviour:
   id: feather
   displayName: Feather
   description: "+10% Projectile Speed per level. Evolves Boomerang."
-  icon: {fileID: 0}
+  icon: {fileID: -314167383, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 9
   modifierKind: 1
   valuePerLevel: 0.1

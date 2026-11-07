@@ -15,7 +15,7 @@ MonoBehaviour:
   id: lunar_wheel
   displayName: Lunar Wheel
   description: "Three giant boomerangs that knock enemies back."
-  icon: {fileID: 0}
+  icon: {fileID: 224970978, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 8500000000000000003, guid: 2c0a2bfa404949afac1569ca3271bd61, type: 3}
   effectPrefab: {fileID: 0}
   projectilePrefab: {fileID: 8200000000000000006, guid: 4ed85012ca6645f18896b41706d6627b, type: 3}

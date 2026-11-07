@@ -15,7 +15,7 @@ MonoBehaviour:
   id: lightning_strike
   displayName: Lightning Strike
   description: "Strikes random enemies on screen."
-  icon: {fileID: 0}
+  icon: {fileID: -1409642682, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   weaponPrefab: {fileID: 8100000000000000003, guid: 5b3768845aad4502a649364fc7aedbd6, type: 3}
   effectPrefab: {fileID: 7800000000000000004, guid: 66857c550834444a8f3678344fac0c46, type: 3}
   projectilePrefab: {fileID: 0}

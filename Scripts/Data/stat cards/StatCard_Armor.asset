@@ -15,7 +15,7 @@ MonoBehaviour:
   id: stat_armor
   displayName: Toughness
   description: "+1 Armor."
-  icon: {fileID: 0}
+  icon: {fileID: -112460589, guid: f28c833d2cdf1e14682b1bc76753918a, type: 3}
   stat: 2
   modifierKind: 0
   value: 1

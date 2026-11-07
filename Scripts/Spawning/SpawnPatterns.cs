@@ -15,7 +15,7 @@ namespace Game.Spawning
             for (int i = 0; i < spawnEvent.Count; i++)
             {
                 Vector2 direction = EnemyManager.DirectionFromAngle(startAngle + i * step);
-                enemies.Spawn(spawnEvent.Enemy, enemies.ClampToMap(center + direction * radius));
+                enemies.Spawn(spawnEvent.Enemy, enemies.FindFreeNear(center + direction * radius));
             }
         }
 
@@ -32,7 +32,7 @@ namespace Game.Spawning
             for (int i = 0; i < spawnEvent.Count; i++)
             {
                 Vector2 position = new(startX, center.y + (i - halfLength) * spawnEvent.Spread);
-                if (enemies.IsInsideMap(position))
+                if (enemies.IsSpawnable(position))
                     enemies.SpawnTraveling(spawnEvent.Enemy, position, direction);
             }
         }
@@ -46,7 +46,7 @@ namespace Game.Spawning
             for (int i = 0; i < spawnEvent.Count; i++)
             {
                 Vector2 position = center + Random.insideUnitCircle * spawnEvent.Spread;
-                enemies.SpawnTraveling(spawnEvent.Enemy, enemies.ClampToMap(position), direction);
+                enemies.SpawnTraveling(spawnEvent.Enemy, enemies.FindFreeNear(position), direction);
             }
         }
 

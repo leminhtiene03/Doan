@@ -306,7 +306,7 @@ TextureImporter:
       name: Tilemap_color1_9
       rect:
         serializedVersion: 2
-        x: 64
+        x: 65
         y: 256
         width: 64
         height: 64
@@ -328,7 +328,7 @@ TextureImporter:
       name: Tilemap_color1_10
       rect:
         serializedVersion: 2
-        x: 128
+        x: 129
         y: 256
         width: 64
         height: 64

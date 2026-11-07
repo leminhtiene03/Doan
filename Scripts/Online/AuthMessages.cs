@@ -16,6 +16,11 @@ namespace Game.Online
         public const string AccountLinked = "Account saved. A verification email has been sent.";
         public const string NotSignedIn = "You are not signed in.";
         public const string Unknown = "Something went wrong. Please try again.";
+        public const string WrongCredentials = "Wrong email or password.";
+        public const string EnterCurrentPassword = "Please enter your current password.";
+        public const string WrongCurrentPassword = "Current password is wrong.";
+        public const string SamePassword = "New password must be different from the current one.";
+        public const string PasswordChanged = "Password changed.";
 
         public static string FromAuthError(AuthError error) => error switch
         {
@@ -23,9 +28,9 @@ namespace Game.Online
             AuthError.MissingEmail => EnterEmail,
             AuthError.MissingPassword => EnterPassword,
             AuthError.WeakPassword => PasswordTooShort,
-            AuthError.WrongPassword => "Wrong email or password.",
-            AuthError.UserNotFound => "Wrong email or password.",
-            AuthError.InvalidCredential => "Wrong email or password.",
+            AuthError.WrongPassword => WrongCredentials,
+            AuthError.UserNotFound => WrongCredentials,
+            AuthError.InvalidCredential => WrongCredentials,
             AuthError.EmailAlreadyInUse => "This email is already registered.",
             AuthError.CredentialAlreadyInUse => "This email is already linked to another account.",
             AuthError.ProviderAlreadyLinked => "This account already has an email.",
